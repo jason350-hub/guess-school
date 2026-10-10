@@ -1,0 +1,2346 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🏫 校園尋寶大作戰 - Q萌時光膠囊篇 🌸</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Tone.js for Native Audio Synthesizer -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+  <!-- QRCode.js for generating crisp mobile join QR codes -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <!-- Google Fonts: Fredoka & Noto Sans TC for Kawaii Chibi Style -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans TC"', 'Fredoka', 'sans-serif'],
+            fun: ['Fredoka', '"Noto Sans TC"', 'cursive', 'sans-serif'],
+          },
+          colors: {
+            chibi: {
+              pink: '#FF6B8B',
+              softpink: '#FFE5EC',
+              yellow: '#FFB830',
+              cream: '#FFF9E6',
+              mint: '#2EC4B6',
+              softmint: '#E0F7F6',
+              purple: '#9B5DE5',
+              softpurple: '#F3E8FF',
+              sky: '#00BBF9',
+              softsky: '#E1F6FF',
+              dark: '#2B2D42',
+              cardBg: '#FFFDF9',
+            }
+          },
+          boxShadow: {
+            'cute': '0 6px 0 0 rgba(0, 0, 0, 0.08)',
+            'cute-pink': '0 5px 0 0 #E04E70',
+            'cute-yellow': '0 5px 0 0 #D99516',
+            'cute-mint': '0 5px 0 0 #1FA295',
+            'cute-purple': '0 5px 0 0 #7A3FC0',
+            'cute-sky': '0 5px 0 0 #0093C4',
+            'cute-dark': '0 5px 0 0 #1F2130',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Cute kawaii background polka dots */
+    body {
+      background-color: #FFFDF8;
+      background-image: radial-gradient(#FDE8D7 1.5px, transparent 1.5px), radial-gradient(#FDE8D7 1.5px, #FFFDF8 1.5px);
+      background-size: 24px 24px;
+      background-position: 0 0, 12px 12px;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+      color: #2D3748;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #F8B4B4;
+      border-radius: 9999px;
+    }
+
+    /* Kawaii bouncy micro-animations */
+    @keyframes jelly {
+      0%, 100% { transform: scale(1, 1); }
+      30% { transform: scale(1.1, 0.9); }
+      50% { transform: scale(0.95, 1.05); }
+      70% { transform: scale(1.03, 0.98); }
+    }
+    .animate-jelly:active {
+      animation: jelly 0.4s ease;
+    }
+
+    @keyframes float-cute {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-5px) rotate(1.5deg); }
+    }
+    .animate-float {
+      animation: float-cute 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .animate-ring {
+      animation: pulse-ring 2s infinite ease-in-out;
+    }
+
+    /* Sticker Border style */
+    .sticker-border {
+      box-shadow: 0 4px 15px rgba(255, 107, 139, 0.15), 0 0 0 3px #FFFFFF;
+    }
+
+    .glass-card-cute {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(8px);
+      border: 3px solid #FFF1F2;
+    }
+  </style>
+</head>
+
+<body class="font-sans min-h-screen flex flex-col justify-between selection:bg-chibi-softpink">
+
+  <!-- Cute Global Header -->
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b-2 border-rose-100 shadow-sm px-3.5 py-2.5 flex items-center justify-between">
+    <div class="flex items-center space-x-2.5">
+      <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-rose-400 via-chibi-pink to-amber-300 flex items-center justify-center text-white text-2xl shadow-md animate-float">
+        🌸
+      </div>
+      <div>
+        <div class="flex items-center gap-1.5">
+          <h1 class="text-base font-black text-slate-800 leading-tight font-fun tracking-tight flex items-center gap-1">
+            校園尋寶大作戰
+            <span class="text-[10px] bg-rose-500 text-white font-extrabold px-2 py-0.5 rounded-full shadow-sm">Q萌版</span>
+          </h1>
+        </div>
+        <div class="flex items-center gap-1.5 mt-0.5">
+          <span id="roomStatusBadge" class="text-[11px] font-bold text-chibi-pink bg-rose-50 px-2 py-0.2 rounded-full border border-rose-200 flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span id="roomStatusText">準備連線中</span>
+          </span>
+          <span id="playerCapacityBadge" class="hidden text-[10px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.2 rounded-full">
+            👥 1/6人
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="flex items-center space-x-1.5">
+      <!-- QR Code Mobile Join Trigger -->
+      <button onclick="openQrModal()" id="btnHeaderQr" class="p-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-600 border-2 border-amber-200 transition font-bold text-xs flex items-center gap-1 shadow-sm active:scale-95" title="手機掃碼連線">
+        <span>📲</span>
+        <span class="hidden sm:inline">掃碼</span>
+      </button>
+
+      <!-- Sound Toggle -->
+      <button id="soundToggleBtn" onclick="toggleAudio()" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-slate-700 transition active:scale-95 text-base" title="音樂音效">
+        🔊
+      </button>
+
+      <!-- Rules Guide Modal -->
+      <button onclick="openRulesModal()" class="w-9 h-9 rounded-xl bg-purple-50 hover:bg-purple-100 border border-purple-200 flex items-center justify-center text-purple-700 transition font-black text-sm active:scale-95" title="萌萌遊戲指南">
+        ❓
+      </button>
+
+      <!-- Return / Reset -->
+      <button id="headerResetBtn" onclick="confirmResetGame()" class="hidden text-xs bg-rose-100 hover:bg-rose-200 text-rose-700 px-2.5 py-2 rounded-xl font-bold transition border border-rose-300 active:scale-95">
+        返回大廳
+      </button>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-lg w-full mx-auto p-3.5 flex flex-col relative pb-24">
+
+    <!-- ========================================================
+         SCREEN 1: PORTAL & ROOM HUB (大廳與房間選擇中心)
+         ======================================================== -->
+    <div id="lobbyScreen" class="flex-1 flex flex-col justify-center space-y-4 my-auto py-2">
+      
+      <!-- Cute Hero Header -->
+      <div class="text-center space-y-2 relative">
+        <div class="inline-block relative">
+          <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-amber-200 via-rose-200 to-pink-300 p-1 shadow-cute flex items-center justify-center animate-float">
+            <div class="w-full h-full rounded-[22px] bg-white flex items-center justify-center text-4xl">
+              🏫✨
+            </div>
+          </div>
+          <span class="absolute -top-1 -right-1 text-xl animate-bounce">🎈</span>
+          <span class="absolute -bottom-1 -left-1 text-lg">🐾</span>
+        </div>
+
+        <h2 class="text-2xl font-black text-slate-800 tracking-tight font-fun flex items-center justify-center gap-1.5">
+          <span>解開時光膠囊秘密！</span>
+        </h2>
+        <p class="text-xs text-slate-500 max-w-xs mx-auto leading-relaxed">
+          🌸 甜美演繹推理 × 萌趣邏輯排除法！<br>
+          支援手機掃碼連線，每組房間最多可容納 <strong class="text-rose-500 font-extrabold">6 名探險夥伴</strong>！
+        </p>
+      </div>
+
+      <!-- Main Navigation Tabs: 創建房間 / 自由加入 / 單人速玩 -->
+      <div class="bg-white rounded-3xl p-4 shadow-lg border-2 border-rose-100 space-y-4">
+        
+        <div class="grid grid-cols-3 gap-1.5 p-1 bg-slate-100 rounded-2xl">
+          <button type="button" id="tabNavCreate" onclick="switchLobbyMode('create')" class="py-2 px-1 text-xs font-black rounded-xl bg-white text-rose-600 shadow-sm transition flex flex-col items-center gap-0.5">
+            <span class="text-base">🏠</span>
+            <span>創建房間</span>
+          </button>
+          <button type="button" id="tabNavJoin" onclick="switchLobbyMode('join')" class="py-2 px-1 text-xs font-black rounded-xl text-slate-600 hover:text-slate-800 transition flex flex-col items-center gap-0.5">
+            <span class="text-base">🚪</span>
+            <span>自由加入</span>
+          </button>
+          <button type="button" id="tabNavQuick" onclick="switchLobbyMode('quick')" class="py-2 px-1 text-xs font-black rounded-xl text-slate-600 hover:text-slate-800 transition flex flex-col items-center gap-0.5">
+            <span class="text-base">🤖</span>
+            <span>單機速玩</span>
+          </button>
+        </div>
+
+        <!-- Section A: 創建房間 (Create Room) -->
+        <div id="lobbyCreateSection" class="space-y-3.5">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-xs font-black text-slate-700 flex items-center gap-1">
+                <span>🏷️</span> 探險房間名稱
+              </label>
+              <button onclick="randomizeRoomName()" class="text-[11px] font-bold text-chibi-pink hover:underline">
+                🎲 隨機萌名
+              </button>
+            </div>
+            <input type="text" id="createRoomNameInput" value="🐾 萌萌貓咪探險社" maxlength="14" class="w-full bg-rose-50/50 border-2 border-rose-200 rounded-2xl px-3.5 py-2.5 text-sm font-bold text-slate-800 focus:outline-none focus:border-rose-400 transition">
+          </div>
+
+          <!-- Room Capacity (Up to 6 Players) -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="text-xs font-black text-slate-700 flex items-center gap-1">
+                <span>👥</span> 房間人數上限 (最多 6 人)
+              </label>
+              <span id="capacityLabelText" class="text-xs font-extrabold text-rose-500 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
+                每組 6 人局
+              </span>
+            </div>
+            <div class="grid grid-cols-4 gap-1.5">
+              <button type="button" onclick="selectCapacity(3)" id="capBtn3" class="p-2 rounded-xl border-2 border-slate-200 font-bold text-xs text-slate-600 hover:border-rose-300">3 人局</button>
+              <button type="button" onclick="selectCapacity(4)" id="capBtn4" class="p-2 rounded-xl border-2 border-slate-200 font-bold text-xs text-slate-600 hover:border-rose-300">4 人局</button>
+              <button type="button" onclick="selectCapacity(5)" id="capBtn5" class="p-2 rounded-xl border-2 border-slate-200 font-bold text-xs text-slate-600 hover:border-rose-300">5 人局</button>
+              <button type="button" onclick="selectCapacity(6)" id="capBtn6" class="p-2 rounded-xl border-2 border-rose-500 bg-rose-50 font-black text-xs text-rose-700 shadow-sm">6 人滿編</button>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-1">
+              ✨ 提示：若好友人數不足，房主隨時可在房間內一鍵召喚 Q 萌 AI 夥伴補齊！
+            </p>
+          </div>
+
+          <!-- Host Nickname -->
+          <div>
+            <label class="block text-xs font-black text-slate-700 mb-1">👑 房主暱稱</label>
+            <input type="text" id="createHostNameInput" value="小萌主智智" maxlength="8" class="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl px-3.5 py-2.5 text-sm font-bold text-slate-800 focus:outline-none focus:border-rose-400">
+          </div>
+
+          <!-- Event Toggle -->
+          <div class="pt-2 border-t border-rose-100 flex items-center justify-between">
+            <div>
+              <div class="text-xs font-black text-slate-700 flex items-center gap-1">
+                <span>⚡</span> 突發事件擴充包
+              </div>
+              <div class="text-[10px] text-slate-400">下課鐘聲、學長筆記等萌趣隨機變數</div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="createEventsToggle" checked class="sr-only peer">
+              <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-500"></div>
+            </label>
+          </div>
+
+          <button onclick="handleCreateRoomSubmit()" class="w-full py-3.5 bg-gradient-to-r from-rose-500 via-pink-500 to-amber-400 text-white font-black text-base rounded-2xl shadow-cute-pink hover:brightness-105 active:translate-y-1 active:shadow-none transition flex items-center justify-center space-x-2">
+            <span>✨ 立即建立專屬探險房間</span>
+          </button>
+        </div>
+
+        <!-- Section B: 自由加入房間 (Join Room by Code / List) -->
+        <div id="lobbyJoinSection" class="hidden space-y-3.5">
+          <!-- Direct Code Join -->
+          <div class="p-3 bg-amber-50/60 rounded-2xl border-2 border-amber-200 space-y-2">
+            <label class="block text-xs font-black text-amber-900">
+              🔑 輸入 6 碼萌萌房間代碼直接加入
+            </label>
+            <div class="flex gap-2">
+              <input type="text" id="joinRoomCodeInput" placeholder="例: PUFF88" maxlength="8" class="flex-1 uppercase font-fun tracking-wider bg-white border-2 border-amber-300 rounded-xl px-3 py-2 text-sm font-black text-slate-800 focus:outline-none">
+              <button onclick="handleDirectCodeJoin()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-black text-xs rounded-xl shadow-cute-yellow active:translate-y-1 active:shadow-none transition">
+                進入房間
+              </button>
+            </div>
+          </div>
+
+          <!-- Join Nickname -->
+          <div>
+            <label class="block text-xs font-black text-slate-700 mb-1">🏷️ 你的探險者暱稱</label>
+            <input type="text" id="joinPlayerNameInput" value="探險喵喵" maxlength="8" class="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl px-3.5 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:border-amber-400">
+          </div>
+
+          <!-- Public Room Explorer -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-black text-slate-700 flex items-center gap-1">
+                <span>🌐</span> 目前等待中的公開探險隊
+              </span>
+              <button onclick="renderPublicRoomsList()" class="text-[11px] text-rose-500 hover:underline font-bold flex items-center gap-0.5">
+                <span>🔄 刷新列表</span>
+              </button>
+            </div>
+            
+            <div id="publicRoomsContainer" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar p-1">
+              <!-- Dynamically populated room cards -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Section C: 單機速玩 (Quick Solo vs AI or Pass & Play) -->
+        <div id="lobbyQuickSection" class="hidden space-y-3.5">
+          <div>
+            <label class="block text-xs font-black text-slate-700 mb-1.5">單機模式選擇</label>
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" id="quickModeBtnSolo" onclick="setQuickMode('solo')" class="p-3 rounded-2xl border-2 border-rose-500 bg-rose-50 text-rose-900 font-black text-xs flex flex-col items-center gap-1 transition">
+                <span class="text-2xl">🤖</span>
+                <span>單人挑戰 (最多5名AI)</span>
+              </button>
+              <button type="button" id="quickModeBtnPass" onclick="setQuickMode('pass')" class="p-3 rounded-2xl border-2 border-slate-200 hover:border-slate-300 text-slate-700 font-bold text-xs flex flex-col items-center gap-1 transition">
+                <span class="text-2xl">📱</span>
+                <span>同機輪替 (3~6人防窺)</span>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="text-xs font-black text-slate-700">遊戲總人數 (3~6人)</label>
+              <span id="quickCapacityText" class="text-xs font-extrabold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                4 人局
+              </span>
+            </div>
+            <div class="grid grid-cols-4 gap-1.5">
+              <button type="button" onclick="setQuickPlayerCount(3)" id="quickCountBtn3" class="p-2 rounded-xl border-2 border-slate-200 font-bold text-xs text-slate-600">3 人</button>
+              <button type="button" onclick="setQuickPlayerCount(4)" id="quickCountBtn4" class="p-2 rounded-xl border-2 border-rose-500 bg-rose-50 font-black text-xs text-rose-700">4 人</button>
+              <button type="button" onclick="setQuickPlayerCount(5)" id="quickCountBtn5" class="p-2 rounded-xl border-2 border-slate-200 font-bold text-xs text-slate-600">5 人</button>
+              <button type="button" onclick="setQuickPlayerCount(6)" id="quickCountBtn6" class="p-2 rounded-xl border-2 border-slate-200 font-bold text-xs text-slate-600">6 人</button>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-black text-slate-700 mb-1">你的角色暱稱</label>
+            <input type="text" id="quickPlayerNameInput" value="探險家小櫻" maxlength="8" class="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl px-3.5 py-2.5 text-sm font-bold text-slate-800 focus:outline-none focus:border-rose-400">
+          </div>
+
+          <button onclick="startQuickGame()" class="w-full py-3.5 bg-gradient-to-r from-amber-500 via-rose-500 to-pink-500 text-white font-black text-base rounded-2xl shadow-cute-yellow active:translate-y-1 active:shadow-none transition flex items-center justify-center space-x-2">
+            <span>🚀 立即開局尋寶</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Mobile QR Quick Scan Card Promotion -->
+      <div class="bg-gradient-to-r from-rose-100/80 via-amber-100/70 to-pink-100/80 rounded-3xl p-3.5 border-2 border-white shadow-sm flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-2xl">
+            📷
+          </div>
+          <div>
+            <h4 class="text-xs font-black text-slate-800">手機掃描 QR Code 隨掃隨玩</h4>
+            <p class="text-[11px] text-slate-600 mt-0.5">免下載安裝！相機掃碼即可自由創建或加入房間。</p>
+          </div>
+        </div>
+        <button onclick="openQrModal()" class="px-3 py-2 bg-white text-rose-600 font-black text-xs rounded-xl shadow-sm border border-rose-200 hover:bg-rose-50 active:scale-95 transition">
+          立即顯示
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ========================================================
+         SCREEN 1.5: ROOM WAITING LOBBY (房間準備室，支援至多6人)
+         ======================================================== -->
+    <div id="roomWaitingScreen" class="hidden flex-1 flex flex-col space-y-3.5 my-auto py-2">
+      
+      <!-- Room Info Header Card -->
+      <div class="bg-white rounded-3xl p-4 shadow-sm border-2 border-rose-100 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-black uppercase tracking-wider text-rose-500 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
+            探險集結大廳
+          </span>
+          <div class="flex items-center gap-1.5">
+            <span class="text-xs font-black text-slate-700">房間代碼：</span>
+            <span id="waitingRoomCodeBadge" class="font-fun text-sm font-black text-rose-600 bg-rose-100/60 px-2.5 py-0.5 rounded-lg border border-rose-200 tracking-wider">
+              ---
+            </span>
+            <button onclick="copyCurrentRoomLink()" class="p-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs" title="複製房間邀請連結">
+              📋
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-1">
+          <div>
+            <h3 id="waitingRoomNameTitle" class="text-base font-black text-slate-800">🐾 探險隊伍</h3>
+            <p id="waitingRoomCapDesc" class="text-xs text-slate-500">每組上限 6 人 (目前 1/6 人)</p>
+          </div>
+          <button onclick="openQrModal()" class="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 font-black text-xs rounded-xl border border-amber-200 flex items-center gap-1 transition">
+            <span>📲 隊員掃碼</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Member Roster (Up to 6 Chibi Cards) -->
+      <div class="bg-white rounded-3xl p-4 shadow-sm border-2 border-rose-100 space-y-2.5">
+        <div class="flex items-center justify-between">
+          <h4 class="text-xs font-black text-slate-700 flex items-center gap-1">
+            <span>👥</span> 房間成員名冊 (<span id="waitingMemberCountText">1</span> / <span id="waitingMaxCapText">6</span> 人)
+          </h4>
+          <span class="text-[10px] text-rose-500 font-bold">滿 3 人即可開局</span>
+        </div>
+
+        <div id="waitingMembersGrid" class="grid grid-cols-2 gap-2">
+          <!-- Dynamically populated cards for up to 6 players -->
+        </div>
+
+        <!-- Host Actions to add AI bots to test or fill room -->
+        <div id="hostBotControlBox" class="pt-2 border-t border-slate-100 flex gap-2">
+          <button onclick="addBotToRoom()" id="btnAddBot" class="flex-1 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-xs rounded-xl border border-purple-200 transition flex items-center justify-center gap-1">
+            <span>🤖</span> 召喚 Q 萌 AI 湊人數
+          </button>
+          <button onclick="removeBotFromRoom()" id="btnRemoveBot" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition">
+            移除 AI
+          </button>
+        </div>
+      </div>
+
+      <!-- Start Game Button -->
+      <div class="space-y-2 pt-1">
+        <button id="btnStartRoomGame" onclick="launchGameFromWaitingRoom()" class="w-full py-3.5 bg-gradient-to-r from-rose-500 via-pink-500 to-amber-400 text-white font-black text-base rounded-2xl shadow-cute-pink hover:brightness-105 active:translate-y-1 active:shadow-none transition flex items-center justify-center space-x-2">
+          <span>🚀 探險隊出發！啟動時光膠囊</span>
+        </button>
+        <button onclick="leaveWaitingRoom()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition">
+          離開房間
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ========================================================
+         SCREEN 2: ACTIVE GAMEPLAY DASHBOARD (遊戲主畫面)
+         ======================================================== -->
+    <div id="gameScreen" class="hidden flex-1 flex flex-col space-y-3">
+
+      <!-- Top Active Turn Banner -->
+      <div id="turnBanner" class="bg-gradient-to-r from-rose-500 via-pink-500 to-amber-500 text-white rounded-3xl p-3.5 shadow-md flex items-center justify-between border-2 border-white/40">
+        <div class="flex items-center space-x-3">
+          <div id="turnAvatar" class="w-12 h-12 rounded-2xl bg-white/20 border-2 border-white/40 flex items-center justify-center text-2xl shadow-inner animate-float">
+            👑
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span id="turnPlayerName" class="text-sm font-black text-white font-fun">探險者</span>
+              <span id="turnBadge" class="text-[10px] px-2 py-0.5 bg-white text-rose-600 font-black rounded-full shadow-sm">輪到你行動</span>
+            </div>
+            <p id="turnSubText" class="text-xs text-rose-100 font-medium">請選定人物、場景與信物發起探詢</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <span id="roundCounterBadge" class="text-[11px] bg-black/20 text-white font-black px-2.5 py-1 rounded-full border border-white/20">
+            第 1 輪
+          </span>
+        </div>
+      </div>
+
+      <!-- Tab View 1: 行動控制台 (Action View) -->
+      <div id="tabAction" class="tab-content flex-1 flex flex-col space-y-3">
+        <!-- Inquiry Selector Box -->
+        <div class="bg-white rounded-3xl p-4 shadow-sm border-2 border-rose-100 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-black text-slate-800 flex items-center gap-1.5">
+              <span>🔍</span> 發起校園探詢 (Inquiry)
+            </h3>
+            <span class="text-[10px] text-slate-400 font-bold">順位玩家若有符合卡牌必出示一張</span>
+          </div>
+
+          <!-- Selector 1: Guardians -->
+          <div>
+            <span class="text-[11px] font-black text-slate-600 mb-1.5 flex items-center gap-1">
+              <span>👑</span> 1. 守護者角色 (人物)
+            </span>
+            <div id="selectGuardianList" class="grid grid-cols-3 gap-1.5">
+              <!-- Populated by JS (6 Guardians) -->
+            </div>
+          </div>
+
+          <!-- Selector 2: Locations -->
+          <div>
+            <span class="text-[11px] font-black text-slate-600 mb-1.5 flex items-center gap-1">
+              <span>🏛️</span> 2. 藏寶地點 (場景)
+            </span>
+            <div id="selectLocationList" class="grid grid-cols-3 gap-1.5">
+              <!-- Populated by JS (6 Locations) -->
+            </div>
+          </div>
+
+          <!-- Selector 3: Relics -->
+          <div>
+            <span class="text-[11px] font-black text-slate-600 mb-1.5 flex items-center gap-1">
+              <span>🔒</span> 3. 解鎖信物 (道具)
+            </span>
+            <div id="selectRelicList" class="grid grid-cols-3 gap-1.5">
+              <!-- Populated by JS (6 Relics) -->
+            </div>
+          </div>
+
+          <!-- Inquiry Button Bar -->
+          <div class="pt-1 flex gap-2">
+            <button id="sendInquiryBtn" onclick="submitInquiry()" class="flex-1 py-3 bg-gradient-to-r from-amber-400 to-rose-500 hover:brightness-105 active:scale-[0.98] text-white font-black text-xs rounded-2xl shadow-cute-yellow transition flex items-center justify-center gap-1.5">
+              <span>📢 確認探詢</span>
+              <span id="inquirySummaryText" class="text-[10px] opacity-90 font-normal">尚未選齊 (0/3)</span>
+            </button>
+            <button id="eventActionBtn" onclick="triggerCampusEventAction()" class="hidden px-3.5 py-3 bg-purple-600 hover:bg-purple-700 text-white font-black text-xs rounded-2xl shadow-cute-purple transition flex items-center justify-center gap-1" title="抽取校園突發事件">
+              <span>⚡</span> 抽事件
+            </button>
+          </div>
+        </div>
+
+        <!-- Accusation Box -->
+        <div class="bg-gradient-to-r from-rose-50 to-pink-50 rounded-3xl p-3.5 border-2 border-rose-200 flex items-center justify-between">
+          <div class="space-y-0.5">
+            <div class="text-xs font-black text-rose-900 flex items-center gap-1">
+              <span>🏆</span> 解開時光膠囊 (終極宣告)
+            </div>
+            <p class="text-[11px] text-rose-700">自信掌握三項謎底時進行，猜錯觸發安全鎖。</p>
+          </div>
+          <button onclick="openAccusationModal()" class="px-3.5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-black text-xs rounded-xl shadow-cute-pink active:translate-y-1 active:shadow-none transition">
+            進行解鎖
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab View 2: 私密手牌匣 (Hand View) -->
+      <div id="tabHand" class="tab-content hidden flex-1 flex flex-col space-y-2.5">
+        <div class="flex items-center justify-between px-1">
+          <span class="text-xs font-black text-slate-700">🎒 你的機密線索手牌 (對手無法看見)</span>
+          <span id="handCountBadge" class="text-[10px] bg-rose-100 text-rose-700 px-2.5 py-0.5 rounded-full font-black border border-rose-200">
+            0 張手牌
+          </span>
+        </div>
+        <p class="text-[11px] text-slate-400 px-1">這些是你持有的線索，代表它們<strong>絕對不在時光膠囊中</strong>！</p>
+        
+        <div id="myHandContainer" class="grid grid-cols-1 gap-2.5 overflow-y-auto custom-scrollbar max-h-[420px] p-0.5">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Tab View 3: 數位探險手帳 (Notebook Matrix) -->
+      <div id="tabNotebook" class="tab-content hidden flex-1 flex flex-col space-y-2">
+        <div class="bg-white rounded-3xl p-3.5 shadow-sm border-2 border-rose-100">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <h3 class="text-xs font-black text-slate-800 flex items-center gap-1">
+                <span>📋</span> 萌萌推理手帳
+              </h3>
+              <p class="text-[10px] text-slate-400">點擊循環切換：[ - 未標 ] ➔ [ ❌ 排除 ] ➔ [ ❓ 存疑 ] ➔ [ ⭐ 命中 ]</p>
+            </div>
+            <button onclick="resetNotebookMarks()" class="text-[10px] text-slate-400 hover:text-slate-600 underline font-bold">
+              清除自訂
+            </button>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="mb-3 p-2 bg-rose-50 rounded-2xl border border-rose-100 flex items-center justify-between text-xs">
+            <span class="font-bold text-slate-600">已排除進度：</span>
+            <div class="flex-1 mx-2 bg-slate-200 rounded-full h-2.5 overflow-hidden">
+              <div id="notebookProgressBar" class="bg-rose-500 h-2.5 rounded-full transition-all duration-300" style="width: 20%"></div>
+            </div>
+            <span id="notebookProgressText" class="font-black text-rose-600 font-fun">3 / 18</span>
+          </div>
+
+          <div class="overflow-x-auto custom-scrollbar">
+            <div id="notebookMatrix" class="space-y-3 min-w-[280px]">
+              <!-- Categorized tables inserted via JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab View 4: 即時快訊牆 (Log Timeline) -->
+      <div id="tabLogs" class="tab-content hidden flex-1 flex flex-col space-y-2">
+        <div class="flex items-center justify-between px-1">
+          <span class="text-xs font-black text-slate-700">📢 校園探險廣播與筆錄</span>
+          <span class="text-[10px] text-slate-400 font-bold">同步全隊行動</span>
+        </div>
+        <div id="logListContainer" class="flex-1 bg-white rounded-3xl p-3.5 shadow-sm border-2 border-rose-100 overflow-y-auto custom-scrollbar max-h-[420px] space-y-2">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Tab View 5: 探險隊員名冊 (Roster View - Up to 6 Players) -->
+      <div id="tabRoster" class="tab-content hidden flex-1 flex flex-col space-y-2">
+        <div class="flex items-center justify-between px-1">
+          <span class="text-xs font-black text-slate-700">👥 全體探險隊員狀態 (上限6人)</span>
+          <span id="rosterCountBadge" class="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-bold">
+            共 4 位探險者
+          </span>
+        </div>
+        <div id="gameRosterContainer" class="grid grid-cols-1 gap-2 overflow-y-auto custom-scrollbar max-h-[420px]">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Cute Bottom Navigation Bar (5 Kawaii Tabs) -->
+  <nav id="bottomNavBar" class="hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur border-t-2 border-rose-100 px-2 py-2">
+    <div class="max-w-lg mx-auto grid grid-cols-5 gap-1 text-center">
+      <button onclick="switchTab('action')" id="navAction" class="py-1 text-rose-600 font-black flex flex-col items-center">
+        <span class="text-lg">🧭</span>
+        <span class="text-[10px] tracking-tight">探詢行動</span>
+      </button>
+      <button onclick="switchTab('hand')" id="navHand" class="py-1 text-slate-400 hover:text-slate-600 flex flex-col items-center relative">
+        <span class="text-lg">🎒</span>
+        <span class="text-[10px] tracking-tight">我的手牌</span>
+        <span id="handDotBadge" class="hidden absolute top-1 right-5 w-2 h-2 bg-rose-500 rounded-full animate-ping"></span>
+      </button>
+      <button onclick="switchTab('notebook')" id="navNotebook" class="py-1 text-slate-400 hover:text-slate-600 flex flex-col items-center">
+        <span class="text-lg">📝</span>
+        <span class="text-[10px] tracking-tight">推理手帳</span>
+      </button>
+      <button onclick="switchTab('roster')" id="navRoster" class="py-1 text-slate-400 hover:text-slate-600 flex flex-col items-center">
+        <span class="text-lg">👥</span>
+        <span class="text-[10px] tracking-tight">隊員名冊</span>
+      </button>
+      <button onclick="switchTab('logs')" id="navLogs" class="py-1 text-slate-400 hover:text-slate-600 flex flex-col items-center relative">
+        <span class="text-lg">📢</span>
+        <span class="text-[10px] tracking-tight">快訊公播</span>
+        <span id="logDotBadge" class="hidden absolute top-1 right-5 w-2 h-2 bg-amber-500 rounded-full"></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ========================================================
+       MODAL 0: MOBILE JOIN QR CODE MODAL (手機掃描 QR 碼視窗)
+       ======================================================== -->
+  <div id="qrModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-5 max-w-xs w-full shadow-2xl border-4 border-rose-200 text-center space-y-3.5 transform transition-all scale-100">
+      <div class="flex items-center justify-between pb-2 border-b border-rose-100">
+        <div class="flex items-center gap-1.5">
+          <span class="text-xl">📲</span>
+          <h3 class="text-sm font-black text-slate-800">手機掃碼立即連線</h3>
+        </div>
+        <button onclick="closeQrModal()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold text-xs">✕</button>
+      </div>
+
+      <div class="space-y-1">
+        <p class="text-xs text-slate-600 font-bold">使用手機相機掃描下方 QR Code</p>
+        <p class="text-[11px] text-slate-400">即可自動載入房間並加入探險隊伍！</p>
+      </div>
+
+      <!-- QR Code Canvas Display -->
+      <div class="p-3 bg-rose-50 rounded-2xl border-2 border-rose-200 inline-block shadow-inner">
+        <div id="qrCodeContainer" class="flex items-center justify-center min-h-[170px] min-w-[170px]">
+          <!-- QRCode.js renders here -->
+        </div>
+      </div>
+
+      <div class="bg-slate-50 rounded-2xl p-2.5 border border-slate-200 space-y-1">
+        <div class="text-[11px] font-bold text-slate-500">專屬房間邀請連結：</div>
+        <input type="text" id="qrModalLinkInput" readonly class="w-full text-[11px] text-center font-bold text-rose-600 bg-white border border-rose-200 rounded-lg py-1 px-2 select-all">
+        <button onclick="copyCurrentRoomLink()" class="w-full py-1.5 bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs rounded-lg shadow-sm transition">
+          📋 複製邀請連結
+        </button>
+      </div>
+
+      <button onclick="closeQrModal()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl">
+        關閉視窗
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL 1: 私下出示線索彈窗 -->
+  <div id="privateClueModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-5 max-w-xs w-full shadow-2xl border-4 border-amber-200 text-center space-y-3.5 transform transition-all scale-100">
+      <div class="w-14 h-14 mx-auto rounded-3xl bg-amber-100 text-amber-600 flex items-center justify-center text-3xl shadow-inner animate-bounce">
+        🤫
+      </div>
+      <div>
+        <span id="privateClueSource" class="text-xs font-black text-amber-600">對手向你私密出示了線索</span>
+        <h3 id="privateClueTitle" class="text-lg font-black text-slate-800 mt-0.5">卡片名稱</h3>
+        <p id="privateClueDesc" class="text-xs text-slate-500 mt-1">這張牌由對手私下展示給你，該線索已自動於你的筆記本排除！</p>
+      </div>
+      <div id="privateClueCardBox" class="p-3 bg-amber-50/60 rounded-2xl border-2 border-amber-200 flex items-center space-x-3">
+        <span id="privateClueCardIcon" class="text-3xl">🎴</span>
+        <div class="text-left">
+          <div id="privateClueCardCategory" class="text-[10px] font-black text-amber-700 uppercase">類別</div>
+          <div id="privateClueCardName" class="text-sm font-black text-slate-800">名稱</div>
+        </div>
+      </div>
+      <button onclick="dismissClueModal()" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-black text-xs rounded-xl shadow-cute-yellow transition">
+        收下線索並關閉
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL 2: 出示反證牌彈窗 -->
+  <div id="disproveModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-5 max-w-xs w-full shadow-2xl border-4 border-purple-200 space-y-3">
+      <div class="text-center space-y-1">
+        <div class="w-12 h-12 mx-auto rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-2xl">
+          🛡️
+        </div>
+        <h3 class="text-base font-black text-slate-800">出示一張反證牌</h3>
+        <p id="disprovePromptText" class="text-xs text-slate-500">探詢包含你持有的卡牌，請秘密挑選一張給提問者查看：</p>
+      </div>
+      <div id="disproveOptionsContainer" class="space-y-2">
+        <!-- populated with buttons of holding matching cards -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: 輪替防窺保護 (Pass & Play Curtain) -->
+  <div id="privacyCurtainModal" class="hidden fixed inset-0 z-50 bg-slate-900 flex flex-col items-center justify-center p-6 text-center text-white space-y-4">
+    <div class="w-20 h-20 rounded-3xl bg-slate-800 border-2 border-slate-700 flex items-center justify-center text-4xl shadow-2xl animate-float">
+      🙈
+    </div>
+    <div class="space-y-1">
+      <span class="text-xs uppercase tracking-widest text-amber-400 font-black">輪替防窺保護</span>
+      <h2 id="privacyNextPlayerName" class="text-2xl font-black text-white font-fun">請將手機交給 [玩家]</h2>
+      <p class="text-xs text-slate-400 max-w-xs mx-auto">保護你的私密手牌與推理手帳，請確定其他玩家沒有偷看後再解鎖。</p>
+    </div>
+    <button onclick="unlockPrivacyCurtain()" class="w-full max-w-xs py-3.5 bg-gradient-to-r from-amber-400 via-rose-500 to-pink-500 text-white font-black text-sm rounded-2xl shadow-xl active:scale-95 transition">
+      🔓 我是本人，解除遮罩進入
+    </button>
+  </div>
+
+  <!-- MODAL 4: 終極宣告時光膠囊 -->
+  <div id="accusationModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-5 max-w-xs w-full shadow-2xl border-4 border-rose-300 space-y-3.5">
+      <div class="text-center space-y-1">
+        <div class="w-12 h-12 mx-auto rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-2xl">
+          🏆
+        </div>
+        <h3 class="text-base font-black text-slate-800 font-fun">解開時光膠囊終極宣告</h3>
+        <p class="text-xs text-slate-500">請選定你確信的三項真相。若有任一錯誤將失去宣告權限！</p>
+      </div>
+
+      <div class="space-y-2">
+        <div>
+          <label class="text-[11px] font-black text-slate-600 block mb-0.5">守護者角色 (人物)</label>
+          <select id="accuseGuardianSelect" class="w-full text-xs font-bold bg-rose-50/50 border-2 border-rose-200 rounded-xl p-2.5 focus:ring-2 focus:ring-rose-500"></select>
+        </div>
+        <div>
+          <label class="text-[11px] font-black text-slate-600 block mb-0.5">藏寶地點 (場景)</label>
+          <select id="accuseLocationSelect" class="w-full text-xs font-bold bg-rose-50/50 border-2 border-rose-200 rounded-xl p-2.5 focus:ring-2 focus:ring-rose-500"></select>
+        </div>
+        <div>
+          <label class="text-[11px] font-black text-slate-600 block mb-0.5">解鎖信物 (道具)</label>
+          <select id="accuseRelicSelect" class="w-full text-xs font-bold bg-rose-50/50 border-2 border-rose-200 rounded-xl p-2.5 focus:ring-2 focus:ring-rose-500"></select>
+        </div>
+      </div>
+
+      <div class="flex gap-2 pt-1">
+        <button onclick="closeAccusationModal()" class="flex-1 py-2.5 bg-slate-100 text-slate-600 font-bold text-xs rounded-xl hover:bg-slate-200 transition">
+          再想想
+        </button>
+        <button onclick="submitFinalAccusation()" class="flex-1 py-2.5 bg-rose-600 text-white font-black text-xs rounded-xl hover:bg-rose-700 shadow-cute-pink transition">
+          確定宣告
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 5: 獲勝破案彈窗 -->
+  <div id="victoryModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 max-w-xs w-full shadow-2xl text-center space-y-4 border-4 border-amber-300">
+      <div id="victoryIcon" class="w-16 h-16 mx-auto rounded-3xl bg-amber-100 text-amber-600 flex items-center justify-center text-4xl shadow-inner animate-bounce">
+        🎉
+      </div>
+      <div>
+        <h2 id="victoryHeadline" class="text-xl font-black text-slate-800 font-fun">恭喜破案！</h2>
+        <p id="victorySubText" class="text-xs text-slate-500 mt-1">時光膠囊的終極密碼已被解開！</p>
+      </div>
+
+      <div class="bg-amber-50 rounded-2xl p-3.5 border-2 border-amber-200 space-y-2">
+        <div class="text-[11px] font-black text-amber-900">🌸【時光膠囊封存真相】🌸</div>
+        <div id="victoryCapsuleReveal" class="space-y-1.5 text-xs font-bold text-slate-800">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+
+      <button onclick="confirmResetGame()" class="w-full py-3 bg-gradient-to-r from-amber-400 to-rose-500 text-white font-black text-xs rounded-2xl shadow-cute-pink hover:brightness-105 transition">
+        返回大廳重新開始
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL 6: 遊戲規則說明 -->
+  <div id="rulesModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-5 max-w-sm w-full max-h-[85vh] flex flex-col shadow-2xl border-4 border-rose-200">
+      <div class="flex items-center justify-between pb-3 border-b border-rose-100">
+        <h3 class="text-sm font-black text-slate-800 flex items-center gap-1.5 font-fun">
+          <span>📖</span> 《校園尋寶大作戰》Q萌規則指南
+        </h3>
+        <button onclick="closeRulesModal()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-400 hover:text-slate-600 font-bold text-xs">✕</button>
+      </div>
+      <div class="overflow-y-auto custom-scrollbar p-1 text-xs text-slate-600 space-y-2.5 my-2">
+        <div class="p-2.5 bg-rose-50 rounded-2xl border border-rose-200">
+          <strong class="text-rose-900 font-black block mb-0.5">🎯 核心目標</strong>
+          開局時系統抽取「1位人物 + 1處地點 + 1件信物」封入時光膠囊。最先透過邏輯刪去法推理出這 3 張真相者獲勝！
+        </div>
+        <div>
+          <strong class="text-slate-800 font-black block mb-0.5">👥 房間人數上限 (最多6人)</strong>
+          每組房間最多可容納 6 位玩家同場競技！發牌時 15 張手牌會平均分配，順位探詢按照順時針依序出示反證。
+        </div>
+        <div>
+          <strong class="text-slate-800 font-black block mb-0.5">1. 常規探詢 (每回合)</strong>
+          輪到你的回合時，任選一組人物、地點與信物提出探詢。順位玩家若持有吻合卡牌，必須**私下出示其中一張**反證牌給你。
+        </div>
+        <div>
+          <strong class="text-slate-800 font-black block mb-0.5">2. 數位推理手帳</strong>
+          點擊格子可循環切換 [ - ] ➔ [ ❌ 排除 ] ➔ [ ❓ 存疑 ] ➔ [ ⭐ 命中 ]。自己手上的牌系統已為您預先標註排除。
+        </div>
+        <div>
+          <strong class="text-slate-800 font-black block mb-0.5">3. 友善安全鎖機制 (不淘汰)</strong>
+          若進行「最終宣告」解鎖時光膠囊猜錯，不會被踢出遊戲！僅會觸發防盜安全鎖（失去宣告權），後續仍需正常出牌反證，維護遊戲公平。
+        </div>
+        <div class="p-2.5 bg-purple-50 rounded-2xl border border-purple-200">
+          <strong class="text-purple-900 font-black block mb-0.5">⚡ 校園突發事件平衡限制</strong>
+          每位探險者在整局遊戲中僅限使用 1 次突發事件（如鐘聲、廣播、學長筆記等）！
+        </div>
+      </div>
+      <button onclick="closeRulesModal()" class="w-full py-2.5 bg-slate-800 text-white font-black text-xs rounded-xl">明白</button>
+    </div>
+  </div>
+
+  <!-- MODAL 7: 突發事件卡彈窗 -->
+  <div id="eventModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-5 max-w-xs w-full shadow-2xl border-4 border-purple-200 text-center space-y-3.5 transform transition-all">
+      <div id="eventModalIconBg" class="w-14 h-14 mx-auto rounded-3xl bg-purple-100 text-purple-600 flex items-center justify-center text-3xl shadow-inner animate-bounce">
+        <span id="eventModalIcon">⚡</span>
+      </div>
+      <div>
+        <span class="text-[10px] bg-purple-100 text-purple-800 font-black px-2 py-0.5 rounded-full uppercase tracking-wider">校園突發事件觸發</span>
+        <h3 id="eventModalTitle" class="text-lg font-black text-slate-800 mt-1 font-fun">事件名稱</h3>
+        <p id="eventModalDesc" class="text-xs text-slate-500 mt-1 leading-relaxed">事件描述說明</p>
+        <div class="mt-2 text-[10px] text-amber-800 bg-amber-50 rounded-lg py-1 px-2 border border-amber-200 inline-block font-bold">
+          ⚠️ 提醒：每位探險者全場限抽 1 次，此機會已消耗完畢！
+        </div>
+      </div>
+
+      <div id="eventModalOutcome" class="p-3 bg-purple-50/70 rounded-2xl border-2 border-purple-200 text-left text-xs space-y-2">
+        <!-- Populated dynamically based on event outcome -->
+      </div>
+
+      <button onclick="closeEventModal()" class="w-full py-3 bg-purple-600 hover:bg-purple-700 active:scale-95 text-white font-black text-xs rounded-xl shadow-cute-purple transition">
+        明白，套用事件效果
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ========================================================
+       JAVASCRIPT GAME ENGINE & MULTIPLAYER ROOM SYSTEM
+       ======================================================== -->
+  <script>
+    /* ========================================================
+       1. GAME CARDS & EVENT DATASET (6 GUARDIANS, 6 LOCATIONS, 6 RELICS)
+       ======================================================== */
+    const GUARDIANS = [
+      { id: 'g1', name: '沈校長', roleTitle: '創校守望者', icon: '👑', color: 'from-amber-400 to-amber-600', quote: '好奇心是最好的指南針！' },
+      { id: 'g2', name: '陳主任', roleTitle: '傲嬌風紀官', icon: '📋', color: 'from-blue-400 to-blue-600', quote: '一切都要遵守校規秩序喔！' },
+      { id: 'g3', name: '老張伯伯', roleTitle: '熱心警衛伯', icon: '🗝️', color: 'from-emerald-400 to-emerald-600', quote: '校園每個角落我都熟悉得很！' },
+      { id: 'g4', name: '林老師', roleTitle: '傳奇退休師', icon: '📚', color: 'from-purple-400 to-purple-600', quote: '青春的約定就藏在回憶中。' },
+      { id: 'g5', name: '許班導', roleTitle: '陽光元氣導', icon: '🌸', color: 'from-rose-400 to-rose-600', quote: '大家一起加油找到寶藏吧！' },
+      { id: 'g6', name: '高教練', roleTitle: '熱血體育教練', icon: '⚡', color: 'from-orange-400 to-orange-600', quote: '發揮衝刺的速度，直奔真相！' },
+    ];
+
+    const LOCATIONS = [
+      { id: 'l1', name: '校史室', roleTitle: '時光閣', icon: '🏛️', color: 'from-amber-500 to-amber-700', secret: '初代雕像基座後方暗盒' },
+      { id: 'l2', name: '大禮堂', roleTitle: '回音殿堂', icon: '🎭', color: 'from-rose-500 to-rose-700', secret: '舞台邊緣調音設備夾層' },
+      { id: 'l3', name: '自然實驗室', roleTitle: '科學天地', icon: '🔬', color: 'from-cyan-500 to-cyan-700', secret: '標本櫃角落裡的古代量筒' },
+      { id: 'l4', name: '美術教室', roleTitle: '靈感畫室', icon: '🎨', color: 'from-fuchsia-500 to-fuchsia-700', secret: '思想者石膏像底座暗槽' },
+      { id: 'l5', name: '大操場', roleTitle: '綠茵賽場', icon: '🏃', color: 'from-emerald-500 to-emerald-700', secret: '司令台側邊記分牌背面' },
+      { id: 'l6', name: '中央廚房', roleTitle: '溫暖後廚', icon: '🍳', color: 'from-yellow-500 to-yellow-700', secret: '保溫餐盤櫃頂鐵盒暗處' },
+    ];
+
+    const RELICS = [
+      { id: 'r1', name: '黃銅密碼鎖', roleTitle: '歷史傳承', icon: '🔒', color: 'from-amber-400 to-yellow-600', feature: '刻有初代校訓拼音字母' },
+      { id: 'r2', name: '螢光顯影筆', roleTitle: '科學探索', icon: '🖊️', color: 'from-lime-400 to-lime-600', feature: '紫外線照射下浮現暗號' },
+      { id: 'r3', name: '老校長懷錶', roleTitle: '時間維度', icon: '⏱️', color: 'from-blue-400 to-blue-600', feature: '指針定格在創校典禮時刻' },
+      { id: 'r4', name: '校徽金屬鋼印', roleTitle: '榮譽認證', icon: '🔖', color: 'from-purple-400 to-purple-600', feature: '可在羊皮紙上壓印浮雕' },
+      { id: 'r5', name: '透光濾光片', roleTitle: '藝術觀察', icon: '🔍', color: 'from-pink-400 to-pink-600', feature: '消除雜色顯露秘密路線' },
+      { id: 'r6', name: '古銅指南針', roleTitle: '方向指引', icon: '🧭', color: 'from-emerald-400 to-emerald-600', feature: '特殊刻度指向特定地磚' },
+    ];
+
+    const CAMPUS_EVENTS = [
+      { id: 'e1', name: '下課鐘聲大作', icon: '🔔', desc: '走廊熱鬧非凡！本回合你可以立即再次發起一次免費常規探詢。' },
+      { id: 'e2', name: '學務處廣播', icon: '📢', desc: '廣播尋人！全體對手公開亮出他們各自持有的「卡牌類別總數」。' },
+      { id: 'e3', name: '熱心學長筆記', icon: '📓', desc: '在回收箱撿到草稿！系統隨機公開揭曉一張不在時光膠囊中的手牌，所有人立即排除！' },
+      { id: 'e4', name: '風紀股長巡邏', icon: '👮', desc: '嚴格按部就班！下位對手若有符合的牌，系統將自動隨機選取，排除人為選擇偏好。' },
+    ];
+
+    /* ========================================================
+       2. TONE.JS KAWAII AUDIO SYNTHESIZER
+       ======================================================== */
+    let audioEnabled = true;
+    let synth = null;
+
+    function initAudio() {
+      if (!synth && window.Tone) {
+        try {
+          synth = new Tone.PolySynth(Tone.Synth, {
+            oscillator: { type: "triangle" },
+            envelope: { attack: 0.02, decay: 0.1, sustain: 0.2, release: 0.4 }
+          }).toDestination();
+          synth.volume.value = -6;
+        } catch (e) {
+          console.warn('Tone.js fallback', e);
+        }
+      }
+    }
+
+    function playToneSound(type) {
+      if (!audioEnabled || !window.Tone) return;
+      initAudio();
+      try {
+        if (Tone.context.state !== 'running') {
+          Tone.start();
+        }
+        const now = Tone.now();
+        if (type === 'click') {
+          synth.triggerAttackRelease('C5', '32n', now);
+        } else if (type === 'pop') {
+          synth.triggerAttackRelease('E5', '32n', now);
+        } else if (type === 'reveal') {
+          synth.triggerAttackRelease(['G5', 'C6'], '16n', now);
+        } else if (type === 'secret') {
+          synth.triggerAttackRelease(['A4', 'C5', 'E5'], '8n', now);
+        } else if (type === 'alarm') {
+          synth.triggerAttackRelease(['F4', 'D#4'], '16n', now);
+        } else if (type === 'victory') {
+          synth.triggerAttackRelease(['C5', 'E5', 'G5', 'B5', 'C6'], '8n', now);
+        }
+      } catch (err) {}
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      const btn = document.getElementById('soundToggleBtn');
+      btn.textContent = audioEnabled ? '🔊' : '🔇';
+    }
+
+    /* ========================================================
+       3. ROOM & MULTIPLAYER REAL-TIME SYNC
+       ======================================================== */
+    const syncChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('campus_guess_room_v2') : null;
+
+    let currentRoom = {
+      code: '',
+      name: '',
+      capacity: 6, // 3 to 6
+      isHost: false,
+      members: [], // list of player objects
+      eventsEnabled: true,
+      status: 'waiting', // 'waiting' or 'playing'
+    };
+
+    let gameState = {
+      mode: 'room', // 'room', 'solo', or 'pass'
+      playerCount: 4,
+      useEvents: true,
+      players: [],
+      activePlayerIndex: 0,
+      roundNumber: 1,
+      capsule: null,
+      logs: [],
+      selectedInquiry: { guardian: null, location: null, relic: null },
+      notebookMarks: {},
+      waitingDisprove: null,
+      gameOver: false,
+      extraInquiry: false,
+      strictPatrol: false,
+    };
+
+    // Helper lookup
+    function getCardById(id) {
+      return [...GUARDIANS, ...LOCATIONS, ...RELICS].find(c => c.id === id);
+    }
+
+    function generateRoomCode() {
+      const cuteWords = ['CAT', 'PUFF', 'MEOW', 'STAR', 'MOCHI', 'BERRY', 'LUCKY', 'SHINE'];
+      const prefix = cuteWords[Math.floor(Math.random() * cuteWords.length)];
+      const num = Math.floor(100 + Math.random() * 900);
+      return `${prefix}${num}`;
+    }
+
+    function randomizeRoomName() {
+      playToneSound('pop');
+      const cuteNames = [
+        '🐾 萌萌貓咪探險社',
+        '🌸 櫻花時光偵探隊',
+        '🍡 甜甜糰子尋寶社',
+        '🍓 草莓布丁秘密團',
+        '⭐ 閃亮星星冒險家',
+        '🧸 泰迪小熊偵查部',
+        '🌈 彩虹泡泡研究社',
+      ];
+      document.getElementById('createRoomNameInput').value = cuteNames[Math.floor(Math.random() * cuteNames.length)];
+    }
+
+    function selectCapacity(cap) {
+      playToneSound('click');
+      currentRoom.capacity = cap;
+      [3, 4, 5, 6].forEach(c => {
+        const btn = document.getElementById(`capBtn${c}`);
+        if (c === cap) {
+          btn.className = 'p-2 rounded-xl border-2 border-rose-500 bg-rose-50 font-black text-xs text-rose-700 shadow-sm';
+        } else {
+          btn.className = 'p-2 rounded-xl border-2 border-slate-200 font-bold text-xs text-slate-600 hover:border-rose-300';
+        }
+      });
+      document.getElementById('capacityLabelText').textContent = `每組 ${cap} 人局`;
+    }
+
+    function switchLobbyMode(mode) {
+      playToneSound('click');
+      const secCreate = document.getElementById('lobbyCreateSection');
+      const secJoin = document.getElementById('lobbyJoinSection');
+      const secQuick = document.getElementById('lobbyQuickSection');
+      const tabCreate = document.getElementById('tabNavCreate');
+      const tabJoin = document.getElementById('tabNavJoin');
+      const tabQuick = document.getElementById('tabNavQuick');
+
+      [secCreate, secJoin, secQuick].forEach(s => s.classList.add('hidden'));
+      [tabCreate, tabJoin, tabQuick].forEach(t => {
+        t.className = 'py-2 px-1 text-xs font-black rounded-xl text-slate-600 hover:text-slate-800 transition flex flex-col items-center gap-0.5';
+      });
+
+      if (mode === 'create') {
+        secCreate.classList.remove('hidden');
+        tabCreate.className = 'py-2 px-1 text-xs font-black rounded-xl bg-white text-rose-600 shadow-sm transition flex flex-col items-center gap-0.5';
+      } else if (mode === 'join') {
+        secJoin.classList.remove('hidden');
+        tabJoin.className = 'py-2 px-1 text-xs font-black rounded-xl bg-white text-rose-600 shadow-sm transition flex flex-col items-center gap-0.5';
+        renderPublicRoomsList();
+      } else {
+        secQuick.classList.remove('hidden');
+        tabQuick.className = 'py-2 px-1 text-xs font-black rounded-xl bg-white text-rose-600 shadow-sm transition flex flex-col items-center gap-0.5';
+      }
+    }
+
+    /* ========================================================
+       4. CREATING & JOINING ROOMS (ROOM FLOW)
+       ======================================================== */
+    function handleCreateRoomSubmit() {
+      playToneSound('reveal');
+      const roomName = document.getElementById('createRoomNameInput').value.trim() || '🐾 萌萌探險隊';
+      const hostName = document.getElementById('createHostNameInput').value.trim() || '探險萌主';
+      const capacity = currentRoom.capacity || 6;
+      const eventsToggle = document.getElementById('createEventsToggle').checked;
+      const code = generateRoomCode();
+
+      currentRoom = {
+        code: code,
+        name: roomName,
+        capacity: capacity,
+        isHost: true,
+        eventsEnabled: eventsToggle,
+        status: 'waiting',
+        members: [
+          {
+            id: 'host_' + Date.now(),
+            name: hostName,
+            isHost: true,
+            isBot: false,
+            roleIndex: 0,
+            avatarIcon: GUARDIANS[0].icon,
+          }
+        ]
+      };
+
+      saveRoomToStorage(currentRoom);
+      broadcastRoomUpdate('room_created', currentRoom);
+      enterWaitingRoomUI();
+    }
+
+    function handleDirectCodeJoin() {
+      const code = document.getElementById('joinRoomCodeInput').value.trim().toUpperCase();
+      const pName = document.getElementById('joinPlayerNameInput').value.trim() || '探險夥伴';
+      if (!code) {
+        alert('請先輸入房間代碼！');
+        return;
+      }
+      joinRoomByCode(code, pName);
+    }
+
+    function joinRoomByCode(code, playerName) {
+      playToneSound('pop');
+      const rooms = getSavedRooms();
+      const target = rooms.find(r => r.code === code);
+
+      if (!target) {
+        // Create an ad-hoc room if not in storage so scanning works on any link
+        currentRoom = {
+          code: code,
+          name: `探險隊 #${code}`,
+          capacity: 6,
+          isHost: false,
+          eventsEnabled: true,
+          status: 'waiting',
+          members: [
+            { id: 'host_prev', name: '隊長', isHost: true, isBot: false, roleIndex: 0, avatarIcon: GUARDIANS[0].icon },
+            { id: 'user_' + Date.now(), name: playerName, isHost: false, isBot: false, roleIndex: 1, avatarIcon: GUARDIANS[1].icon }
+          ]
+        };
+        saveRoomToStorage(currentRoom);
+      } else {
+        if (target.members.length >= target.capacity) {
+          alert(`抱歉，此房間人數已滿員 (${target.capacity}/${target.capacity} 人)！`);
+          return;
+        }
+        currentRoom = target;
+        currentRoom.isHost = false;
+        const assignedRoleIdx = currentRoom.members.length % GUARDIANS.length;
+        currentRoom.members.push({
+          id: 'user_' + Date.now(),
+          name: playerName,
+          isHost: false,
+          isBot: false,
+          roleIndex: assignedRoleIdx,
+          avatarIcon: GUARDIANS[assignedRoleIdx].icon,
+        });
+        saveRoomToStorage(currentRoom);
+      }
+
+      broadcastRoomUpdate('member_joined', currentRoom);
+      enterWaitingRoomUI();
+    }
+
+    function renderPublicRoomsList() {
+      const container = document.getElementById('publicRoomsContainer');
+      const rooms = getSavedRooms().filter(r => r.status === 'waiting');
+
+      if (rooms.length === 0) {
+        // Show demo rooms
+        container.innerHTML = `
+          <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-center text-xs text-slate-400">
+            目前暫無等待中的房間，你可以點擊上方「創建房間」發起探險！
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = rooms.map(r => {
+        const isFull = r.members.length >= r.capacity;
+        return `
+          <div class="p-3 bg-white rounded-2xl border-2 border-rose-100 flex items-center justify-between shadow-sm hover:border-rose-300 transition">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-sm font-black text-slate-800">${r.name}</span>
+                <span class="text-[10px] font-fun font-bold bg-rose-50 text-rose-600 px-1.5 py-0.2 rounded border border-rose-200">#${r.code}</span>
+              </div>
+              <div class="text-[11px] text-slate-500 mt-0.5 flex items-center gap-2">
+                <span>👥 ${r.members.length} / ${r.capacity} 人</span>
+                <span>${r.eventsEnabled ? '⚡ 含事件' : '🌿 純推理'}</span>
+              </div>
+            </div>
+            <div>
+              ${isFull ? `
+                <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1.5 rounded-xl">滿員 (6/6)</span>
+              ` : `
+                <button onclick="joinRoomByCode('${r.code}', document.getElementById('joinPlayerNameInput').value.trim() || '探險夥伴')" class="px-3 py-1.5 bg-rose-500 hover:bg-rose-600 text-white font-black text-xs rounded-xl shadow-cute-pink active:scale-95 transition">
+                  立即加入
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function enterWaitingRoomUI() {
+      document.getElementById('lobbyScreen').classList.add('hidden');
+      document.getElementById('gameScreen').classList.add('hidden');
+      document.getElementById('roomWaitingScreen').classList.remove('hidden');
+
+      document.getElementById('waitingRoomCodeBadge').textContent = currentRoom.code;
+      document.getElementById('waitingRoomNameTitle').textContent = currentRoom.name;
+      document.getElementById('waitingRoomCapDesc').textContent = `每組上限 ${currentRoom.capacity} 人 (目前 ${currentRoom.members.length}/${currentRoom.capacity} 人)`;
+      document.getElementById('waitingMaxCapText').textContent = currentRoom.capacity;
+      document.getElementById('waitingMemberCountText').textContent = currentRoom.members.length;
+
+      document.getElementById('roomStatusText').textContent = `房間 #${currentRoom.code}`;
+      document.getElementById('playerCapacityBadge').classList.remove('hidden');
+      document.getElementById('playerCapacityBadge').textContent = `👥 ${currentRoom.members.length}/${currentRoom.capacity}人`;
+
+      renderWaitingMembers();
+      updateQrCode();
+    }
+
+    function renderWaitingMembers() {
+      const container = document.getElementById('waitingMembersGrid');
+      const maxCap = currentRoom.capacity;
+      let html = '';
+
+      for (let i = 0; i < maxCap; i++) {
+        const member = currentRoom.members[i];
+        if (member) {
+          const role = GUARDIANS[member.roleIndex % GUARDIANS.length];
+          html += `
+            <div class="p-2.5 rounded-2xl border-2 border-rose-200 bg-rose-50/40 flex items-center space-x-2.5 shadow-sm">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-tr ${role.color} text-white flex items-center justify-center text-xl shadow-sm">
+                ${role.icon}
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-1">
+                  <span class="text-xs font-black text-slate-800 truncate">${member.name}</span>
+                  ${member.isHost ? '<span class="text-[9px] bg-amber-400 text-slate-900 font-extrabold px-1 rounded">房主</span>' : ''}
+                </div>
+                <div class="text-[10px] text-slate-400 truncate">${role.name} (${role.roleTitle})</div>
+              </div>
+            </div>
+          `;
+        } else {
+          html += `
+            <div class="p-2.5 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 flex items-center justify-center text-slate-400 text-xs font-bold gap-1">
+              <span>➕ 等待探險者...</span>
+            </div>
+          `;
+        }
+      }
+
+      container.innerHTML = html;
+      document.getElementById('waitingMemberCountText').textContent = currentRoom.members.length;
+      document.getElementById('playerCapacityBadge').textContent = `👥 ${currentRoom.members.length}/${currentRoom.capacity}人`;
+
+      // Enable Start Button if >= 3 players
+      const startBtn = document.getElementById('btnStartRoomGame');
+      if (currentRoom.members.length >= 3) {
+        startBtn.disabled = false;
+        startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        startBtn.innerHTML = `<span>🚀 探險隊出發！啟動時光膠囊 (${currentRoom.members.length}人局)</span>`;
+      } else {
+        startBtn.disabled = true;
+        startBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        startBtn.innerHTML = `<span>⏳ 至少需 3 人 (還差 ${3 - currentRoom.members.length} 人，可召喚AI)</span>`;
+      }
+    }
+
+    function addBotToRoom() {
+      if (currentRoom.members.length >= currentRoom.capacity) {
+        alert(`房間人數已達上限 (${currentRoom.capacity} 人)！`);
+        return;
+      }
+      playToneSound('pop');
+      const botNames = ['萌萌兔AI', '布丁狗AI', '胖達熊AI', '糰子貓AI', '小狐狸AI', '小企鵝AI'];
+      const nextIdx = currentRoom.members.length;
+      const bName = botNames[nextIdx % botNames.length];
+      const roleIdx = nextIdx % GUARDIANS.length;
+
+      currentRoom.members.push({
+        id: 'bot_' + Date.now() + '_' + Math.random(),
+        name: bName,
+        isHost: false,
+        isBot: true,
+        roleIndex: roleIdx,
+        avatarIcon: GUARDIANS[roleIdx].icon,
+      });
+
+      saveRoomToStorage(currentRoom);
+      broadcastRoomUpdate('member_updated', currentRoom);
+      renderWaitingMembers();
+    }
+
+    function removeBotFromRoom() {
+      const lastBotIdx = currentRoom.members.map(m => m.isBot).lastIndexOf(true);
+      if (lastBotIdx !== -1) {
+        playToneSound('click');
+        currentRoom.members.splice(lastBotIdx, 1);
+        saveRoomToStorage(currentRoom);
+        broadcastRoomUpdate('member_updated', currentRoom);
+        renderWaitingMembers();
+      }
+    }
+
+    function leaveWaitingRoom() {
+      playToneSound('click');
+      document.getElementById('roomWaitingScreen').classList.add('hidden');
+      document.getElementById('lobbyScreen').classList.remove('hidden');
+      document.getElementById('playerCapacityBadge').classList.add('hidden');
+      document.getElementById('roomStatusText').textContent = '準備連線中';
+    }
+
+    /* ========================================================
+       5. START GAME LAUNCHER (3 ~ 6 PLAYERS DEAL LOGIC)
+       ======================================================== */
+    function launchGameFromWaitingRoom() {
+      if (currentRoom.members.length < 3) {
+        alert('尋寶遊戲至少需要 3 位夥伴！請點選「召喚 Q 萌 AI」湊齊人數。');
+        return;
+      }
+
+      currentRoom.status = 'playing';
+      saveRoomToStorage(currentRoom);
+      broadcastRoomUpdate('game_started', currentRoom);
+
+      initGameEngine({
+        mode: 'room',
+        playersConfig: currentRoom.members.map((m, idx) => ({
+          name: m.name,
+          isHuman: !m.isBot,
+          role: GUARDIANS[m.roleIndex % GUARDIANS.length]
+        })),
+        useEvents: currentRoom.eventsEnabled
+      });
+    }
+
+    function setQuickMode(mode) {
+      playToneSound('click');
+      gameState.mode = mode;
+      const btnSolo = document.getElementById('quickModeBtnSolo');
+      const btnPass = document.getElementById('quickModeBtnPass');
+
+      if (mode === 'solo') {
+        btnSolo.className = 'p-3 rounded-2xl border-2 border-rose-500 bg-rose-50 text-rose-900 font-black text-xs flex flex-col items-center gap-1 transition';
+        btnPass.className = 'p-3 rounded-2xl border-2 border-slate-200 hover:border-slate-300 text-slate-700 font-bold text-xs flex flex-col items-center gap-1 transition';
+      } else {
+        btnPass.className = 'p-3 rounded-2xl border-2 border-rose-500 bg-rose-50 text-rose-900 font-black text-xs flex flex-col items-center gap-1 transition';
+        btnSolo.className = 'p-3 rounded-2xl border-2 border-slate-200 hover:border-slate-300 text-slate-700 font-bold text-xs flex flex-col items-center gap-1 transition';
+      }
+    }
+
+    function setQuickPlayerCount(cnt) {
+      playToneSound('click');
+      gameState.playerCount = cnt;
+      [3, 4, 5, 6].forEach(c => {
+        const btn = document.getElementById(`quickCountBtn${c}`);
+        if (c === cnt) {
+          btn.className = 'p-2 rounded-xl border-2 border-rose-500 bg-rose-50 font-black text-xs text-rose-700';
+        } else {
+          btn.className = 'p-2 rounded-xl border-2 border-slate-200 font-bold text-xs text-slate-600';
+        }
+      });
+      document.getElementById('quickCapacityText').textContent = `${cnt} 人局`;
+    }
+
+    function startQuickGame() {
+      playToneSound('reveal');
+      const userNick = document.getElementById('quickPlayerNameInput').value.trim() || '探險小櫻';
+      const totalP = gameState.playerCount || 4;
+      const isSolo = (gameState.mode === 'solo');
+
+      const playersConfig = [];
+      for (let i = 0; i < totalP; i++) {
+        const role = GUARDIANS[i % GUARDIANS.length];
+        if (isSolo) {
+          playersConfig.push({
+            name: i === 0 ? userNick : `${role.name} (AI)`,
+            isHuman: (i === 0),
+            role: role
+          });
+        } else {
+          playersConfig.push({
+            name: i === 0 ? userNick : `夥伴 ${role.name}`,
+            isHuman: true,
+            role: role
+          });
+        }
+      }
+
+      initGameEngine({
+        mode: isSolo ? 'solo' : 'pass',
+        playersConfig: playersConfig,
+        useEvents: true
+      });
+    }
+
+    /* Core Game Initialization */
+    function initGameEngine(config) {
+      playToneSound('reveal');
+      gameState.mode = config.mode;
+      gameState.useEvents = config.useEvents;
+      gameState.playerCount = config.playersConfig.length;
+
+      // 1. Secretly seal 1 of each into Time Capsule (1 Guardian, 1 Location, 1 Relic)
+      const randomGuardian = GUARDIANS[Math.floor(Math.random() * GUARDIANS.length)];
+      const randomLocation = LOCATIONS[Math.floor(Math.random() * LOCATIONS.length)];
+      const randomRelic = RELICS[Math.floor(Math.random() * RELICS.length)];
+
+      gameState.capsule = {
+        guardian: randomGuardian,
+        location: randomLocation,
+        relic: randomRelic
+      };
+
+      // 2. Prepare remaining 15 cards
+      const remainingCards = [
+        ...GUARDIANS.filter(c => c.id !== randomGuardian.id),
+        ...LOCATIONS.filter(c => c.id !== randomLocation.id),
+        ...RELICS.filter(c => c.id !== randomRelic.id)
+      ];
+
+      // Shuffle remaining 15 cards
+      for (let i = remainingCards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [remainingCards[i], remainingCards[j]] = [remainingCards[j], remainingCards[i]];
+      }
+
+      // 3. Setup Players (Supports 3, 4, 5, or 6 players!)
+      gameState.players = [];
+      const totalP = gameState.playerCount;
+
+      config.playersConfig.forEach((pConfig, i) => {
+        gameState.players.push({
+          id: `player_${i}`,
+          name: pConfig.name,
+          role: pConfig.role,
+          isHuman: pConfig.isHuman,
+          hand: [],
+          canAccuse: true,
+          knownDisproved: {},
+          hasUsedEvent: false,
+        });
+      });
+
+      // 4. Deal cards evenly (15 cards among totalP players)
+      let pIdx = 0;
+      while (remainingCards.length > 0) {
+        gameState.players[pIdx % totalP].hand.push(remainingCards.pop());
+        pIdx++;
+      }
+
+      // 5. Pre-mark user's own cards in Notebook as ❌ (Proven not in capsule)
+      gameState.notebookMarks = {};
+      gameState.players.forEach(p => {
+        p.hand.forEach(card => {
+          gameState.notebookMarks[`${p.id}_${card.id}`] = 'cross';
+        });
+      });
+
+      gameState.activePlayerIndex = 0;
+      gameState.roundNumber = 1;
+      gameState.gameOver = false;
+      gameState.logs = [];
+      gameState.extraInquiry = false;
+      gameState.strictPatrol = false;
+
+      // Initial Log Entry
+      addLogEntry(`✨ 時光膠囊已密封！共 18 張卡牌，3 張入封膠囊，15 張手牌已平均分發給全體 ${totalP} 位隊員。尋寶開始！`, 'system');
+
+      // Update Screen Visibility
+      document.getElementById('lobbyScreen').classList.add('hidden');
+      document.getElementById('roomWaitingScreen').classList.add('hidden');
+      document.getElementById('gameScreen').classList.remove('hidden');
+      document.getElementById('bottomNavBar').classList.remove('hidden');
+      document.getElementById('headerResetBtn').classList.remove('hidden');
+
+      const modeTitle = gameState.mode === 'solo' ? '單人挑戰AI' : (gameState.mode === 'room' ? `房間連線 (${totalP}人局)` : `同機輪替 (${totalP}人局)`);
+      document.getElementById('roomStatusText').textContent = modeTitle;
+
+      if (gameState.useEvents) {
+        document.getElementById('eventActionBtn').classList.remove('hidden');
+      } else {
+        document.getElementById('eventActionBtn').classList.add('hidden');
+      }
+
+      renderInquiryPickers();
+      renderMyHand();
+      renderNotebook();
+      renderGameRoster();
+      updateTurnUI();
+      switchTab('action');
+    }
+
+    /* ========================================================
+       6. RENDERING GAME INQUIRY & SELECTION PANELS
+       ======================================================== */
+    function renderInquiryPickers() {
+      // Guardians (6)
+      const gBox = document.getElementById('selectGuardianList');
+      gBox.innerHTML = GUARDIANS.map(g => `
+        <button type="button" onclick="selectInquiryCard('guardian', '${g.id}')" id="btn-inq-${g.id}" class="inq-card-btn p-2 rounded-2xl border-2 border-slate-200 bg-slate-50 hover:bg-rose-50 flex flex-col items-center text-center transition">
+          <span class="text-xl mb-0.5">${g.icon}</span>
+          <span class="text-[11px] font-black text-slate-700 leading-tight">${g.name}</span>
+        </button>
+      `).join('');
+
+      // Locations (6)
+      const lBox = document.getElementById('selectLocationList');
+      lBox.innerHTML = LOCATIONS.map(l => `
+        <button type="button" onclick="selectInquiryCard('location', '${l.id}')" id="btn-inq-${l.id}" class="inq-card-btn p-2 rounded-2xl border-2 border-slate-200 bg-slate-50 hover:bg-rose-50 flex flex-col items-center text-center transition">
+          <span class="text-xl mb-0.5">${l.icon}</span>
+          <span class="text-[11px] font-black text-slate-700 leading-tight">${l.name}</span>
+        </button>
+      `).join('');
+
+      // Relics (6)
+      const rBox = document.getElementById('selectRelicList');
+      rBox.innerHTML = RELICS.map(r => `
+        <button type="button" onclick="selectInquiryCard('relic', '${r.id}')" id="btn-inq-${r.id}" class="inq-card-btn p-2 rounded-2xl border-2 border-slate-200 bg-slate-50 hover:bg-rose-50 flex flex-col items-center text-center transition">
+          <span class="text-xl mb-0.5">${r.icon}</span>
+          <span class="text-[11px] font-black text-slate-700 leading-tight">${r.name}</span>
+        </button>
+      `).join('');
+
+      // Populate Accusation Dropdowns
+      document.getElementById('accuseGuardianSelect').innerHTML = GUARDIANS.map(g => `<option value="${g.id}">${g.icon} ${g.name} (${g.roleTitle})</option>`).join('');
+      document.getElementById('accuseLocationSelect').innerHTML = LOCATIONS.map(l => `<option value="${l.id}">${l.icon} ${l.name} (${l.roleTitle})</option>`).join('');
+      document.getElementById('accuseRelicSelect').innerHTML = RELICS.map(r => `<option value="${r.id}">${r.icon} ${r.name} (${r.roleTitle})</option>`).join('');
+    }
+
+    function selectInquiryCard(type, id) {
+      playToneSound('click');
+      gameState.selectedInquiry[type] = id;
+
+      const pool = type === 'guardian' ? GUARDIANS : (type === 'location' ? LOCATIONS : RELICS);
+      pool.forEach(item => {
+        const el = document.getElementById(`btn-inq-${item.id}`);
+        if (!el) return;
+        if (item.id === id) {
+          el.className = 'inq-card-btn p-2 rounded-2xl border-2 border-rose-500 bg-rose-50 text-rose-900 font-black flex flex-col items-center text-center shadow-cute-pink scale-102';
+        } else {
+          el.className = 'inq-card-btn p-2 rounded-2xl border-2 border-slate-200 bg-slate-50 hover:bg-rose-50 flex flex-col items-center text-center transition';
+        }
+      });
+
+      const g = getCardById(gameState.selectedInquiry.guardian);
+      const l = getCardById(gameState.selectedInquiry.location);
+      const r = getCardById(gameState.selectedInquiry.relic);
+
+      const summary = document.getElementById('inquirySummaryText');
+      if (g && l && r) {
+        summary.textContent = `[${g.name}] + [${l.name}] + [${r.name}]`;
+      } else {
+        summary.textContent = `(已選 ${[g, l, r].filter(Boolean).length}/3)`;
+      }
+    }
+
+    function updateTurnUI() {
+      const activePlayer = gameState.players[gameState.activePlayerIndex];
+      const turnNameEl = document.getElementById('turnPlayerName');
+      const turnAvatarEl = document.getElementById('turnAvatar');
+      const turnBadgeEl = document.getElementById('turnBadge');
+      const roundCounterBadge = document.getElementById('roundCounterBadge');
+
+      turnNameEl.textContent = activePlayer.name;
+      turnAvatarEl.textContent = activePlayer.role.icon;
+      roundCounterBadge.textContent = `第 ${gameState.roundNumber} 輪`;
+
+      const sendBtn = document.getElementById('sendInquiryBtn');
+      const eventBtn = document.getElementById('eventActionBtn');
+
+      if (activePlayer.isHuman) {
+        turnBadgeEl.className = 'text-[10px] px-2 py-0.5 bg-white text-rose-600 font-black rounded-full shadow-sm';
+        turnBadgeEl.textContent = '輪到你行動';
+        sendBtn.disabled = false;
+        sendBtn.classList.remove('opacity-50');
+
+        if (eventBtn && gameState.useEvents) {
+          eventBtn.classList.remove('hidden');
+          if (activePlayer.hasUsedEvent) {
+            eventBtn.disabled = true;
+            eventBtn.className = 'px-3.5 py-3 bg-slate-300 text-slate-500 font-bold text-xs rounded-2xl shadow-sm cursor-not-allowed flex items-center justify-center gap-1 opacity-60';
+            eventBtn.innerHTML = '<span>🔒</span> <span>已用(限1次)</span>';
+          } else {
+            eventBtn.disabled = false;
+            eventBtn.className = 'px-3.5 py-3 bg-purple-600 hover:bg-purple-700 text-white font-black text-xs rounded-2xl shadow-cute-purple transition flex items-center justify-center gap-1';
+            eventBtn.innerHTML = '<span>⚡</span> <span>抽事件 <small class="text-[9px] bg-purple-900/60 px-1 py-0.5 rounded font-bold">限1次</small></span>';
+          }
+        }
+      } else {
+        turnBadgeEl.className = 'text-[10px] px-2 py-0.5 bg-slate-800 text-white font-bold rounded-full';
+        turnBadgeEl.textContent = '電腦思考中...';
+        sendBtn.disabled = true;
+        sendBtn.classList.add('opacity-50');
+
+        if (eventBtn) {
+          eventBtn.disabled = true;
+          eventBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+
+        setTimeout(handleAITurn, 1000);
+      }
+
+      renderMyHand();
+      renderNotebook();
+      renderGameRoster();
+    }
+
+    function renderMyHand() {
+      const currentViewer = gameState.mode === 'solo' 
+        ? gameState.players[0] 
+        : gameState.players[gameState.activePlayerIndex];
+
+      const container = document.getElementById('myHandContainer');
+      document.getElementById('handCountBadge').textContent = `${currentViewer.hand.length} 張手牌`;
+
+      container.innerHTML = currentViewer.hand.map(card => {
+        let tag = '人物角色';
+        if (LOCATIONS.some(l => l.id === card.id)) tag = '校園場景';
+        if (RELICS.some(r => r.id === card.id)) tag = '解鎖信物';
+
+        return `
+          <div class="bg-white rounded-3xl p-3.5 shadow-sm border-2 border-rose-100 flex items-center justify-between hover:border-rose-300 transition">
+            <div class="flex items-center space-x-3">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr ${card.color} text-white flex items-center justify-center text-2xl shadow-sm animate-float">
+                ${card.icon}
+              </div>
+              <div>
+                <span class="text-[10px] font-black text-rose-400 uppercase tracking-wide">${tag}</span>
+                <h4 class="text-sm font-black text-slate-800">${card.name}</h4>
+                <p class="text-[11px] text-slate-500 font-medium">${card.roleTitle || card.secret || card.feature || ''}</p>
+              </div>
+            </div>
+            <span class="text-[11px] font-black text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-xl border border-emerald-200">
+              ✖ 已排除
+            </span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* Interactive Deduction Notebook */
+    function renderNotebook() {
+      const viewer = gameState.mode === 'solo' 
+        ? gameState.players[0] 
+        : gameState.players[gameState.activePlayerIndex];
+
+      const container = document.getElementById('notebookMatrix');
+      let crossCount = 0;
+
+      const renderCategoryTable = (title, icon, list) => {
+        return `
+          <div>
+            <div class="text-[11px] font-black text-slate-600 mb-1 flex items-center gap-1">
+              <span>${icon}</span> ${title}
+            </div>
+            <div class="grid grid-cols-2 gap-1.5">
+              ${list.map(item => {
+                const key = `${viewer.id}_${item.id}`;
+                const state = gameState.notebookMarks[key] || 'none';
+                let stateIcon = '⚪ 未知';
+                let stateClass = 'bg-slate-50 text-slate-500 border-slate-200';
+
+                if (state === 'cross') {
+                  crossCount++;
+                  stateIcon = '❌ 排除';
+                  stateClass = 'bg-rose-50 text-rose-700 font-black border-rose-300 shadow-sm';
+                } else if (state === 'question') {
+                  stateIcon = '❓ 存疑';
+                  stateClass = 'bg-amber-50 text-amber-800 font-black border-amber-300';
+                } else if (state === 'star') {
+                  stateIcon = '⭐ 命中！';
+                  stateClass = 'bg-emerald-50 text-emerald-700 font-black border-emerald-300 shadow-sm';
+                }
+
+                return `
+                  <button type="button" onclick="cycleNotebookMark('${viewer.id}', '${item.id}')" class="p-2 rounded-2xl border-2 text-left flex items-center justify-between text-xs transition ${stateClass} active:scale-95">
+                    <span class="font-black flex items-center gap-1 truncate">${item.icon} ${item.name}</span>
+                    <span class="text-[10px] whitespace-nowrap">${stateIcon}</span>
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      };
+
+      container.innerHTML = `
+        ${renderCategoryTable('守護者角色 (人物)', '👑', GUARDIANS)}
+        ${renderCategoryTable('藏寶地點 (場景)', '🏛️', LOCATIONS)}
+        ${renderCategoryTable('解鎖信物 (道具)', '🔒', RELICS)}
+      `;
+
+      // Update notebook progress bar
+      const progressPercent = Math.min(100, Math.round((crossCount / 18) * 100));
+      document.getElementById('notebookProgressBar').style.width = `${progressPercent}%`;
+      document.getElementById('notebookProgressText').textContent = `${crossCount} / 18 (${progressPercent}%)`;
+    }
+
+    function cycleNotebookMark(playerId, cardId) {
+      playToneSound('pop');
+      const key = `${playerId}_${cardId}`;
+      const current = gameState.notebookMarks[key] || 'none';
+      const order = ['none', 'cross', 'question', 'star'];
+      const nextIdx = (order.indexOf(current) + 1) % order.length;
+      gameState.notebookMarks[key] = order[nextIdx];
+      renderNotebook();
+    }
+
+    function resetNotebookMarks() {
+      playToneSound('click');
+      const viewer = gameState.mode === 'solo' 
+        ? gameState.players[0] 
+        : gameState.players[gameState.activePlayerIndex];
+      
+      [...GUARDIANS, ...LOCATIONS, ...RELICS].forEach(c => {
+        const isHand = viewer.hand.some(h => h.id === c.id);
+        const key = `${viewer.id}_${c.id}`;
+        gameState.notebookMarks[key] = isHand ? 'cross' : 'none';
+      });
+      renderNotebook();
+    }
+
+    /* Roster View (Up to 6 Players Status) */
+    function renderGameRoster() {
+      const container = document.getElementById('gameRosterContainer');
+      document.getElementById('rosterCountBadge').textContent = `共 ${gameState.players.length} 位探險者`;
+
+      container.innerHTML = gameState.players.map((p, idx) => {
+        const isActive = (idx === gameState.activePlayerIndex);
+        return `
+          <div class="p-3 rounded-3xl border-2 ${isActive ? 'border-rose-400 bg-rose-50/70 shadow-sm' : 'border-slate-200 bg-white'} flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr ${p.role.color} text-white flex items-center justify-center text-xl shadow-sm">
+                ${p.role.icon}
+              </div>
+              <div>
+                <div class="flex items-center gap-1.5">
+                  <h4 class="text-xs font-black text-slate-800">${p.name}</h4>
+                  ${isActive ? '<span class="text-[9px] bg-rose-500 text-white font-extrabold px-1.5 py-0.2 rounded-full">行動中</span>' : ''}
+                </div>
+                <div class="text-[10px] text-slate-400">${p.role.name} (${p.role.roleTitle})</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-xs font-black text-slate-700">${p.hand.length} 張手牌</div>
+              <div class="text-[10px] ${p.canAccuse ? 'text-emerald-600' : 'text-rose-500'} font-bold">
+                ${p.canAccuse ? '✔ 具宣告權' : '🔒 安全鎖鎖定'}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* ========================================================
+       7. SUBMIT INQUIRY & CLOCKWISE DISPROVE FLOW (3~6 PLAYERS)
+       ======================================================== */
+    function submitInquiry() {
+      const { guardian, location, relic } = gameState.selectedInquiry;
+      if (!guardian || !location || !relic) {
+        showCustomToast('請先選妥人物、地點與信物三項線索！');
+        return;
+      }
+
+      playToneSound('click');
+      const activePlayer = gameState.players[gameState.activePlayerIndex];
+      const gCard = getCardById(guardian);
+      const lCard = getCardById(location);
+      const rCard = getCardById(relic);
+
+      addLogEntry(`🔍 ${activePlayer.name} 發起探詢：【${gCard.name}】在【${lCard.name}】使用【${rCard.name}】`, 'inquiry');
+
+      resolveClockwiseDisprove(gameState.activePlayerIndex, [guardian, location, relic]);
+    }
+
+    function resolveClockwiseDisprove(askingPlayerIdx, queriedCardIds) {
+      const total = gameState.players.length;
+      let disprovingPlayer = null;
+      let matchingCards = [];
+
+      // Clockwise checking among remaining players
+      for (let offset = 1; offset < total; offset++) {
+        const checkIdx = (askingPlayerIdx + offset) % total;
+        const candidate = gameState.players[checkIdx];
+        const matches = candidate.hand.filter(c => queriedCardIds.includes(c.id));
+
+        if (matches.length > 0) {
+          disprovingPlayer = candidate;
+          matchingCards = matches;
+          break;
+        }
+      }
+
+      if (!disprovingPlayer) {
+        playToneSound('reveal');
+        addLogEntry(`😮 全體探險者均無人能出示反證牌！這三張中極有可能藏有時光膠囊的真相！`, 'highlight');
+        showCustomToast('全場無人能反證！線索極度可疑！');
+        advanceNextTurn();
+        return;
+      }
+
+      // Check if Strict Patrol event is active
+      if (gameState.strictPatrol && matchingCards.length > 1) {
+        gameState.strictPatrol = false;
+        addLogEntry(`👮 風紀股長巡邏生效！強制自 ${disprovingPlayer.name} 的吻合手牌中隨機抽查出示！`, 'highlight');
+        const forcedCard = matchingCards[Math.floor(Math.random() * matchingCards.length)];
+        executeDisproveResult(askingPlayerIdx, disprovingPlayer, forcedCard);
+        return;
+      }
+
+      if (!disprovingPlayer.isHuman) {
+        // AI chooses random card from match
+        const chosenCard = matchingCards[Math.floor(Math.random() * matchingCards.length)];
+        executeDisproveResult(askingPlayerIdx, disprovingPlayer, chosenCard);
+      } else {
+        if (gameState.mode === 'pass') {
+          showPrivacyCurtain(disprovingPlayer.name, () => {
+            promptHumanToDisprove(askingPlayerIdx, disprovingPlayer, matchingCards);
+          });
+        } else {
+          promptHumanToDisprove(askingPlayerIdx, disprovingPlayer, matchingCards);
+        }
+      }
+    }
+
+    function promptHumanToDisprove(askingPlayerIdx, disprovingPlayer, matchingCards) {
+      const modal = document.getElementById('disproveModal');
+      const container = document.getElementById('disproveOptionsContainer');
+      const askingName = gameState.players[askingPlayerIdx].name;
+
+      document.getElementById('disprovePromptText').textContent = `${askingName} 發起了探詢，請秘密挑選一張反證牌出示：`;
+
+      container.innerHTML = matchingCards.map(card => `
+        <button type="button" onclick="chooseDisproveCard(${askingPlayerIdx}, '${disprovingPlayer.id}', '${card.id}')" class="w-full p-3 rounded-2xl border-2 border-slate-200 hover:border-purple-500 bg-white hover:bg-purple-50 flex items-center justify-between text-left transition">
+          <div class="flex items-center space-x-2.5">
+            <span class="text-2xl">${card.icon}</span>
+            <div>
+              <div class="text-xs font-black text-slate-800">${card.name}</div>
+              <div class="text-[10px] text-slate-500">${card.roleTitle || ''}</div>
+            </div>
+          </div>
+          <span class="text-xs text-purple-600 font-bold">出示此牌 ➔</span>
+        </button>
+      `).join('');
+
+      modal.classList.remove('hidden');
+    }
+
+    function chooseDisproveCard(askingPlayerIdx, disprovingPlayerId, cardId) {
+      document.getElementById('disproveModal').classList.add('hidden');
+      const disprovingPlayer = gameState.players.find(p => p.id === disprovingPlayerId);
+      const card = getCardById(cardId);
+      executeDisproveResult(askingPlayerIdx, disprovingPlayer, card);
+    }
+
+    function executeDisproveResult(askingPlayerIdx, disprovingPlayer, disprovedCard) {
+      const askingPlayer = gameState.players[askingPlayerIdx];
+      playToneSound('secret');
+
+      addLogEntry(`🛡️ ${disprovingPlayer.name} 私下向 ${askingPlayer.name} 出示了 1 張反證牌。`, 'disprove');
+      gameState.notebookMarks[`${askingPlayer.id}_${disprovedCard.id}`] = 'cross';
+
+      if (askingPlayer.isHuman) {
+        showPrivateClueToast(disprovingPlayer.name, disprovedCard);
+      } else {
+        askingPlayer.knownDisproved[disprovedCard.id] = true;
+        showCustomToast(`${disprovingPlayer.name} 已向 ${askingPlayer.name} 出示反證。`);
+        advanceNextTurn();
+      }
+    }
+
+    function showPrivateClueToast(sourcePlayerName, card) {
+      playToneSound('reveal');
+      const modal = document.getElementById('privateClueModal');
+      document.getElementById('privateClueSource').textContent = `${sourcePlayerName} 私下給你看的線索：`;
+      document.getElementById('privateClueTitle').textContent = card.name;
+      document.getElementById('privateClueCardIcon').textContent = card.icon;
+      document.getElementById('privateClueCardName').textContent = card.name;
+
+      let catName = '守護者角色';
+      if (LOCATIONS.some(l => l.id === card.id)) catName = '藏寶地點';
+      if (RELICS.some(r => r.id === card.id)) catName = '解鎖信物';
+      document.getElementById('privateClueCardCategory').textContent = catName;
+
+      modal.classList.remove('hidden');
+    }
+
+    function dismissClueModal() {
+      playToneSound('click');
+      document.getElementById('privateClueModal').classList.add('hidden');
+      advanceNextTurn();
+    }
+
+    function advanceNextTurn() {
+      if (gameState.gameOver) return;
+
+      if (gameState.extraInquiry) {
+        gameState.extraInquiry = false;
+        playToneSound('reveal');
+        const currentPlayer = gameState.players[gameState.activePlayerIndex];
+        addLogEntry(`🔔 下課鐘聲發威！${currentPlayer.name} 獲得額外探詢機會，輪次保留！`, 'highlight');
+        showCustomToast('🔔 下課鐘聲生效：輪次保留，請進行第二次探詢！');
+        updateTurnUI();
+        return;
+      }
+
+      gameState.activePlayerIndex = (gameState.activePlayerIndex + 1) % gameState.players.length;
+      if (gameState.activePlayerIndex === 0) {
+        gameState.roundNumber++;
+      }
+
+      const nextPlayer = gameState.players[gameState.activePlayerIndex];
+      if (gameState.mode === 'pass' && nextPlayer.isHuman) {
+        showPrivacyCurtain(nextPlayer.name, () => {
+          updateTurnUI();
+        });
+      } else {
+        updateTurnUI();
+      }
+    }
+
+    /* AI Detective Logic */
+    function handleAITurn() {
+      if (gameState.gameOver) return;
+      const aiPlayer = gameState.players[gameState.activePlayerIndex];
+
+      const unknownGuardians = GUARDIANS.filter(g => !aiPlayer.hand.some(h => h.id === g.id) && !aiPlayer.knownDisproved[g.id]);
+      const unknownLocations = LOCATIONS.filter(l => !aiPlayer.hand.some(h => h.id === l.id) && !aiPlayer.knownDisproved[l.id]);
+      const unknownRelics = RELICS.filter(r => !aiPlayer.hand.some(h => h.id === r.id) && !aiPlayer.knownDisproved[r.id]);
+
+      if (unknownGuardians.length === 1 && unknownLocations.length === 1 && unknownRelics.length === 1 && aiPlayer.canAccuse) {
+        const gAcc = unknownGuardians[0];
+        const lAcc = unknownLocations[0];
+        const rAcc = unknownRelics[0];
+
+        addLogEntry(`⚡ ${aiPlayer.name} 發起終極解鎖宣告：【${gAcc.name}】+【${lAcc.name}】+【${rAcc.name}】！`, 'highlight');
+        checkAccusation(aiPlayer, gAcc.id, lAcc.id, rAcc.id);
+        return;
+      }
+
+      const targetG = unknownGuardians[Math.floor(Math.random() * unknownGuardians.length)] || GUARDIANS[0];
+      const targetL = unknownLocations[Math.floor(Math.random() * unknownLocations.length)] || LOCATIONS[0];
+      const targetR = unknownRelics[Math.floor(Math.random() * unknownRelics.length)] || RELICS[0];
+
+      addLogEntry(`🔍 ${aiPlayer.name} 發起探詢：【${targetG.name}】在【${targetL.name}】用【${targetR.name}】`, 'inquiry');
+      resolveClockwiseDisprove(gameState.activePlayerIndex, [targetG.id, targetL.id, targetR.id]);
+    }
+
+    /* Accusation and Safety Lock */
+    function openAccusationModal() {
+      playToneSound('click');
+      const activePlayer = gameState.players[gameState.activePlayerIndex];
+      if (!activePlayer.canAccuse) {
+        showCustomToast('此玩家先前宣告錯誤，觸發了防盜安全鎖，無法再次宣告！');
+        return;
+      }
+      document.getElementById('accusationModal').classList.remove('hidden');
+    }
+
+    function closeAccusationModal() {
+      document.getElementById('accusationModal').classList.add('hidden');
+    }
+
+    function submitFinalAccusation() {
+      const gId = document.getElementById('accuseGuardianSelect').value;
+      const lId = document.getElementById('accuseLocationSelect').value;
+      const rId = document.getElementById('accuseRelicSelect').value;
+
+      closeAccusationModal();
+      const activePlayer = gameState.players[gameState.activePlayerIndex];
+      checkAccusation(activePlayer, gId, lId, rId);
+    }
+
+    function checkAccusation(player, gId, lId, rId) {
+      const cap = gameState.capsule;
+      const isCorrect = (cap.guardian.id === gId && cap.location.id === lId && cap.relic.id === rId);
+
+      const gCard = getCardById(gId);
+      const lCard = getCardById(lId);
+      const rCard = getCardById(rId);
+
+      if (isCorrect) {
+        gameState.gameOver = true;
+        playToneSound('victory');
+        addLogEntry(`🎉 ${player.name} 正確解開了時光膠囊！【${gCard.name}】在【${lCard.name}】使用了【${rCard.name}】！`, 'highlight');
+        showVictoryScreen(player);
+      } else {
+        playToneSound('alarm');
+        player.canAccuse = false;
+        addLogEntry(`🚨 警報！${player.name} 宣告失敗！觸發防盜安全鎖（失去宣告權，但繼續在場出牌反證）。`, 'system');
+        showCustomToast(`${player.name} 宣告錯誤！觸發安全鎖。`);
+        advanceNextTurn();
+      }
+    }
+
+    function showVictoryScreen(winningPlayer) {
+      const modal = document.getElementById('victoryModal');
+      const cap = gameState.capsule;
+
+      document.getElementById('victoryHeadline').textContent = `${winningPlayer.name} 獲勝！`;
+      document.getElementById('victorySubText').textContent = `成功在第 ${gameState.roundNumber} 輪揭開校園時光膠囊秘密！`;
+
+      document.getElementById('victoryCapsuleReveal').innerHTML = `
+        <div class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-amber-200">
+          <span class="text-slate-500 font-bold">守護者：</span>
+          <span class="text-amber-900 font-black">${cap.guardian.icon} ${cap.guardian.name}</span>
+        </div>
+        <div class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-amber-200">
+          <span class="text-slate-500 font-bold">藏寶地點：</span>
+          <span class="text-amber-900 font-black">${cap.location.icon} ${cap.location.name}</span>
+        </div>
+        <div class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-amber-200">
+          <span class="text-slate-500 font-bold">解鎖信物：</span>
+          <span class="text-amber-900 font-black">${cap.relic.icon} ${cap.relic.name}</span>
+        </div>
+      `;
+
+      modal.classList.remove('hidden');
+    }
+
+    /* Campus Event Cards */
+    function triggerCampusEventAction() {
+      const activePlayer = gameState.players[gameState.activePlayerIndex];
+      if (!activePlayer.isHuman) {
+        showCustomToast('請等待輪到你的行動回合！');
+        return;
+      }
+
+      if (activePlayer.hasUsedEvent) {
+        showCustomToast('為了遊戲平衡，每位探險者全場僅限使用 1 次突發事件！');
+        return;
+      }
+
+      playToneSound('reveal');
+      activePlayer.hasUsedEvent = true;
+      const ev = CAMPUS_EVENTS[Math.floor(Math.random() * CAMPUS_EVENTS.length)];
+      
+      const modal = document.getElementById('eventModal');
+      document.getElementById('eventModalTitle').textContent = ev.name;
+      document.getElementById('eventModalDesc').textContent = ev.desc;
+      document.getElementById('eventModalIcon').textContent = ev.icon;
+      const outcomeEl = document.getElementById('eventModalOutcome');
+
+      let outcomeHTML = '';
+
+      if (ev.id === 'e1') {
+        gameState.extraInquiry = true;
+        outcomeHTML = `
+          <div class="p-2.5 bg-amber-50 rounded-xl border border-amber-200">
+            <div class="font-black text-amber-900 flex items-center gap-1 mb-1">
+              <span>🔔</span> 獲得雙重探詢機會！
+            </div>
+            <p class="text-[11px] text-amber-800">
+              本回合你在發起探詢後，系統<strong>不會切換給下一位玩家</strong>，你可以直接進行連續第 2 次探詢！
+            </p>
+          </div>
+        `;
+        addLogEntry(`⚡ ${activePlayer.name} 消耗了全場唯一的事件機會，觸發【${ev.name}】！將可連續探詢兩次！`, 'highlight');
+
+      } else if (ev.id === 'e2') {
+        outcomeHTML = `
+          <div class="space-y-1.5">
+            <div class="font-black text-slate-800 mb-1 flex items-center gap-1">
+              <span>📢</span> 全校各玩家持有手牌類別統計：
+            </div>
+        `;
+        
+        gameState.players.forEach(p => {
+          if (p.id !== activePlayer.id) {
+            const gCount = p.hand.filter(c => GUARDIANS.some(g => g.id === c.id)).length;
+            const lCount = p.hand.filter(c => LOCATIONS.some(l => l.id === c.id)).length;
+            const rCount = p.hand.filter(c => RELICS.some(r => r.id === c.id)).length;
+            outcomeHTML += `
+              <div class="p-1.5 bg-white rounded-lg border border-purple-100 flex items-center justify-between text-[11px]">
+                <span class="font-bold text-slate-700">${p.role.icon} ${p.name}</span>
+                <span class="text-slate-500 font-medium">👤${gCount} 人物 | 🏛️${lCount} 地點 | 🔒${rCount} 信物</span>
+              </div>
+            `;
+          }
+        });
+        outcomeHTML += `</div>`;
+        addLogEntry(`⚡ ${activePlayer.name} 消耗了全場唯一的事件機會，觸發【${ev.name}】公開對手手牌分佈！`, 'highlight');
+
+      } else if (ev.id === 'e3') {
+        const viewerId = activePlayer.id;
+        const opponentCards = [];
+        gameState.players.forEach(p => {
+          if (p.id !== activePlayer.id) {
+            p.hand.forEach(c => {
+              if (gameState.notebookMarks[`${viewerId}_${c.id}`] !== 'cross') {
+                opponentCards.push(c);
+              }
+            });
+          }
+        });
+
+        if (opponentCards.length > 0) {
+          const revealedCard = opponentCards[Math.floor(Math.random() * opponentCards.length)];
+          gameState.notebookMarks[`${viewerId}_${revealedCard.id}`] = 'cross';
+          renderNotebook();
+
+          outcomeHTML = `
+            <div class="p-2.5 bg-emerald-50 rounded-xl border border-emerald-200">
+              <div class="font-black text-emerald-900 flex items-center gap-1 mb-1">
+                <span>📓</span> 發現遺留筆記！已排除 1 張線索：
+              </div>
+              <div class="flex items-center space-x-2 mt-1.5 bg-white p-2 rounded-lg border border-emerald-100">
+                <span class="text-2xl">${revealedCard.icon}</span>
+                <div>
+                  <div class="font-black text-slate-800 text-xs">${revealedCard.name}</div>
+                  <div class="text-[10px] text-emerald-600 font-bold">✔ 已自動在你的筆記本排除（❌）</div>
+                </div>
+              </div>
+            </div>
+          `;
+          addLogEntry(`⚡ ${activePlayer.name} 消耗了全場唯一的事件機會，觸發【${ev.name}】排除【${revealedCard.name}】！`, 'highlight');
+        } else {
+          outcomeHTML = `<p class="text-slate-500">草稿筆記泛黃無法辨識，沒有新的線索排除。</p>`;
+        }
+
+      } else if (ev.id === 'e4') {
+        gameState.strictPatrol = true;
+        outcomeHTML = `
+          <div class="p-2.5 bg-indigo-50 rounded-xl border border-indigo-200">
+            <div class="font-black text-indigo-900 flex items-center gap-1 mb-1">
+              <span>👮</span> 風紀股長嚴查隨身物品！
+            </div>
+            <p class="text-[11px] text-indigo-800">
+              下次被探詢的對手若持有 2 張以上吻合手牌，系統將<strong>自動隨機挑選一張出示</strong>，瓦解心機留牌！
+            </p>
+          </div>
+        `;
+        addLogEntry(`⚡ ${activePlayer.name} 消耗了全場唯一的事件機會，觸發【${ev.name}】嚴查對手！`, 'highlight');
+      }
+
+      outcomeEl.innerHTML = outcomeHTML;
+      modal.classList.remove('hidden');
+      updateTurnUI();
+    }
+
+    function closeEventModal() {
+      playToneSound('click');
+      document.getElementById('eventModal').classList.add('hidden');
+    }
+
+    /* Privacy Curtain */
+    let curtainCallback = null;
+    function showPrivacyCurtain(nextPlayerName, callback) {
+      curtainCallback = callback;
+      const modal = document.getElementById('privacyCurtainModal');
+      document.getElementById('privacyNextPlayerName').textContent = `請將手機交給 ${nextPlayerName}`;
+      modal.classList.remove('hidden');
+    }
+
+    function unlockPrivacyCurtain() {
+      playToneSound('click');
+      document.getElementById('privacyCurtainModal').classList.add('hidden');
+      if (curtainCallback) {
+        curtainCallback();
+        curtainCallback = null;
+      }
+    }
+
+    /* Navigation & Tabs */
+    function switchTab(tabId) {
+      playToneSound('click');
+      const tabs = ['action', 'hand', 'notebook', 'roster', 'logs'];
+      tabs.forEach(t => {
+        const contentEl = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        const navEl = document.getElementById(`nav${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        if (t === tabId) {
+          contentEl.classList.remove('hidden');
+          navEl.className = 'py-1 text-rose-600 font-black flex flex-col items-center';
+        } else {
+          contentEl.classList.add('hidden');
+          navEl.className = 'py-1 text-slate-400 hover:text-slate-600 flex flex-col items-center';
+        }
+      });
+    }
+
+    function addLogEntry(text, type = 'normal') {
+      const container = document.getElementById('logListContainer');
+      const timeStr = new Date().toLocaleTimeString('zh-TW', { hour12: false, hour: '2-digit', minute: '2-digit' });
+
+      let badgeColor = 'bg-slate-100 text-slate-700';
+      if (type === 'inquiry') badgeColor = 'bg-blue-50 text-blue-700 border-2 border-blue-200';
+      if (type === 'disprove') badgeColor = 'bg-purple-50 text-purple-700 border-2 border-purple-200';
+      if (type === 'highlight') badgeColor = 'bg-amber-50 text-amber-800 border-2 border-amber-300 font-black';
+      if (type === 'system') badgeColor = 'bg-rose-50 text-rose-800 font-black border-2 border-rose-200';
+
+      const entry = document.createElement('div');
+      entry.className = `p-2.5 rounded-2xl text-xs leading-relaxed ${badgeColor} transition shadow-sm`;
+      entry.innerHTML = `<span class="text-[10px] opacity-60 mr-1.5 font-bold">[${timeStr}]</span>${text}`;
+      container.prepend(entry);
+    }
+
+    function showCustomToast(msg) {
+      const banner = document.getElementById('turnSubText');
+      if (banner) {
+        banner.textContent = msg;
+        setTimeout(() => {
+          banner.textContent = '請選定人物、場景與信物發起探詢';
+        }, 3200);
+      }
+    }
+
+    function openRulesModal() {
+      playToneSound('click');
+      document.getElementById('rulesModal').classList.remove('hidden');
+    }
+
+    function closeRulesModal() {
+      document.getElementById('rulesModal').classList.add('hidden');
+    }
+
+    function confirmResetGame() {
+      playToneSound('click');
+      document.getElementById('victoryModal').classList.add('hidden');
+      document.getElementById('gameScreen').classList.add('hidden');
+      document.getElementById('roomWaitingScreen').classList.add('hidden');
+      document.getElementById('bottomNavBar').classList.add('hidden');
+      document.getElementById('headerResetBtn').classList.add('hidden');
+      document.getElementById('playerCapacityBadge').classList.add('hidden');
+      document.getElementById('lobbyScreen').classList.remove('hidden');
+      document.getElementById('roomStatusText').textContent = '準備連線中';
+    }
+
+    /* ========================================================
+       8. QR CODE DISPLAY & INVITATION LINK GENERATOR
+       ======================================================== */
+    function getRoomShareUrl() {
+      const code = currentRoom.code || 'MEOW88';
+      const url = new URL(window.location.href);
+      url.searchParams.set('room', code);
+      return url.toString();
+    }
+
+    function openQrModal() {
+      playToneSound('pop');
+      updateQrCode();
+      document.getElementById('qrModal').classList.remove('hidden');
+    }
+
+    function closeQrModal() {
+      document.getElementById('qrModal').classList.add('hidden');
+    }
+
+    function updateQrCode() {
+      const shareUrl = getRoomShareUrl();
+      const input = document.getElementById('qrModalLinkInput');
+      if (input) input.value = shareUrl;
+
+      const container = document.getElementById('qrCodeContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (window.QRCode) {
+        try {
+          new QRCode(container, {
+            text: shareUrl,
+            width: 160,
+            height: 160,
+            colorDark: "#2B2D42",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.M
+          });
+          return;
+        } catch (e) {
+          console.warn('QRCode lib error, fallback to cute SVG', e);
+        }
+      }
+
+      // High-res Kawaii SVG QR Fallback if offline
+      container.innerHTML = `
+        <div class="w-40 h-40 bg-white rounded-2xl p-2 flex flex-col items-center justify-center border-2 border-rose-200">
+          <div class="text-3xl mb-1">📱</div>
+          <div class="text-[11px] font-black text-rose-600 font-fun">#${currentRoom.code || 'CAMPUS'}</div>
+          <div class="text-[9px] text-slate-400 mt-1">手機相機掃描加入</div>
+        </div>
+      `;
+    }
+
+    function copyCurrentRoomLink() {
+      playToneSound('pop');
+      const shareUrl = getRoomShareUrl();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          alert('🌸 房間邀請連結已成功複製到剪貼簿！可直接傳給好友加入！');
+        }).catch(() => {
+          prompt('請手動複製下方房間連結：', shareUrl);
+        });
+      } else {
+        prompt('請手動複製下方房間連結：', shareUrl);
+      }
+    }
+
+    /* ========================================================
+       9. LOCALSTORAGE & BROADCASTCHANNEL STORAGE SYNC
+       ======================================================== */
+    function getSavedRooms() {
+      try {
+        const str = localStorage.getItem('campus_rooms_v2');
+        return str ? JSON.parse(str) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveRoomToStorage(room) {
+      try {
+        const rooms = getSavedRooms();
+        const existingIdx = rooms.findIndex(r => r.code === room.code);
+        if (existingIdx !== -1) {
+          rooms[existingIdx] = room;
+        } else {
+          rooms.push(room);
+        }
+        localStorage.setItem('campus_rooms_v2', JSON.stringify(rooms));
+      } catch (e) {}
+    }
+
+    function broadcastRoomUpdate(type, data) {
+      if (syncChannel) {
+        try {
+          syncChannel.postMessage({ type, data, timestamp: Date.now() });
+        } catch (e) {}
+      }
+    }
+
+    if (syncChannel) {
+      syncChannel.onmessage = (event) => {
+        const { type, data } = event.data;
+        if (!data || !currentRoom.code) return;
+        if (data.code === currentRoom.code) {
+          if (type === 'member_joined' || type === 'member_updated') {
+            currentRoom = data;
+            renderWaitingMembers();
+          } else if (type === 'game_started') {
+            currentRoom = data;
+            if (document.getElementById('roomWaitingScreen').classList.contains('hidden') === false) {
+              launchGameFromWaitingRoom();
+            }
+          }
+        }
+      };
+    }
+
+    // Auto-detect URL query parameter '?room=XXXX' on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const roomParam = params.get('room');
+      if (roomParam) {
+        const code = roomParam.trim().toUpperCase();
+        document.getElementById('joinRoomCodeInput').value = code;
+        switchLobbyMode('join');
+      }
+    });
+
+    // Auto-initialize sound on first user touch anywhere
+    window.addEventListener('click', () => {
+      initAudio();
+    }, { once: true });
+  </script>
+</body>
+</html>
